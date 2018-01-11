@@ -1,0 +1,28 @@
+{
+  "plugins": ["node"],
+  "extends": [
+    "eslint:recommended",
+    "plugin:node/recommended",
+    "plugin:react/recommended"
+  ],
+  "parser": "babel-eslint",
+  "rules": {
+    "node/no-unsupported-features": 0,
+    "quotes": ["error", "double"],
+    "semi": "error",
+    "space-before-function-paren": "off",
+    "import/no-dynamic-require": "off",
+    "no-mixed-spaces-and-tabs": "error",
+    "brace-style": "error",
+    "camelcase": "off"
+  },
+  "globals": {
+    "window": true,
+    "document": true
+  },
+  "env": {
+    "es6": true,
+    "browser": true,
+    "node": true
+  }
+}
