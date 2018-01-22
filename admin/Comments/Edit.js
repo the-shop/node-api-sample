@@ -3,8 +3,11 @@ import {
   DisabledInput,
   Edit,
   SimpleForm,
+  ReferenceInput,
+  SelectInput,
   TextInput,
 } from "admin-on-rest/lib/mui";
+import { required } from "admin-on-rest";
 
 const EditPage = props => (
   <Edit
@@ -13,13 +16,19 @@ const EditPage = props => (
   >
     <SimpleForm>
       <DisabledInput source="id" />
-      <TextInput
-        source="owner"
-        label="Comment owner"
-      />
+      <ReferenceInput
+        label="Owner id"
+        source="ownerId"
+        reference="users"
+        allowEmpty
+        validate={required}
+      >
+        <SelectInput optionText="id" />
+      </ReferenceInput>
       <TextInput
         source="content"
         label="Post content"
+        validate={required}
       />
     </SimpleForm>
   </Edit>

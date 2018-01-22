@@ -72,12 +72,12 @@ class PasswordResetRequestAction extends AbstractAction {
    * Actual handler for the API endpoint
    */
   async handle ({ email }) {
-    this.trigger("EVENT_ACTION_PASSWORD_RESET_REQUEST_PRE");
+    await this.trigger("EVENT_ACTION_PASSWORD_RESET_REQUEST_PRE");
 
     const user = await UsersCollection.loadOne({ email: email });
 
     if (!user) {
-      this.trigger("EVENT_ACTION_PASSWORD_RESET_REQUEST_USER_NOT_FOUND");
+      await this.trigger("EVENT_ACTION_PASSWORD_RESET_REQUEST_USER_NOT_FOUND");
       throw new NotFoundError("User with provided email doesn't exist.");
     }
 
@@ -85,7 +85,7 @@ class PasswordResetRequestAction extends AbstractAction {
 
     await UsersCollection.save(user);
 
-    this.trigger("EVENT_ACTION_PASSWORD_RESET_REQUEST_POST", user);
+    await this.trigger("EVENT_ACTION_PASSWORD_RESET_REQUEST_POST", user);
 
     return user;
   }

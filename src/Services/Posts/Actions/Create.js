@@ -71,31 +71,34 @@ class CreateAction extends AbstractAction {
       );
     }
 
-    return { 
+    return {
       title: request.body.title,
       content: request.body.content,
-    };
+      owner: request.user._id.toString(),
+  };
   }
 
   /**
    * Actual handler for the API endpoint
    */
   async handle({ 
-    title,
-    content,
+    title, 
+    content, 
+    owner, 
   }) {
-    this.trigger("EVENT_ACTION_POST_CREATE_MODEL_PRE");
+    await this.trigger("EVENT_ACTION_POST_CREATE_MODEL_PRE");
 
-    const model = PostsCollection.create({ 
-      title,
-      content,
+    const model = PostsCollection.create({
+      title, 
+      content, 
+      owner, 
     });
 
-    this.trigger("EVENT_ACTION_POST_CREATE_MODEL_CREATED", model);
+    await this.trigger("EVENT_ACTION_POST_CREATE_MODEL_CREATED", model);
 
-    await model.save();
+    await PostsCollection.save(model);
 
-    this.trigger("EVENT_ACTION_POST_CREATE_MODEL_POST", model);
+    await this.trigger("EVENT_ACTION_POST_CREATE_MODEL_POST", model);
 
     return model;
   }

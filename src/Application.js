@@ -133,12 +133,14 @@ class Application {
    * @param query
    * @param data
    * @param headers
+   * @param graceful
    * @returns {Promise<*>}
    */
   async externalHttpRequest(
     requestMethod = "get",
     url = null,
-    { query = {}, data = {}, headers = {} } = {}
+    { query = {}, data = {}, headers = {} } = {},
+    graceful = false
   ) {
     const method = requestMethod.toLowerCase();
     const httpClient = this.getHttpClient();
@@ -164,6 +166,9 @@ class Application {
         requestError.response.headers,
         requestError.response.body
       );
+      if (graceful !== true) {
+        throw new FrameworkError(requestError.response.body.errors[0]);
+      }
     }
   }
 

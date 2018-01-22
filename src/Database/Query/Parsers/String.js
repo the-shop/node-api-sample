@@ -4,8 +4,8 @@ import mongoose from "mongoose";
 class StringParser {
   parse(attributeName, attributeValue, attributeDefinedSchema) {
     if (typeof attributeValue === "string" &&
-      attributeDefinedSchema.instance.toLowerCase() === "string" ||
-      attributeDefinedSchema.instance.toLowerCase() === "objectid"
+      (attributeDefinedSchema.instance.toLowerCase() === "string" ||
+      attributeDefinedSchema.instance.toLowerCase() === "objectid")
     ) {
 
       if (attributeDefinedSchema.instance.toLocaleLowerCase() === "objectid" && !mongoose.Types.ObjectId.isValid(attributeValue)) {

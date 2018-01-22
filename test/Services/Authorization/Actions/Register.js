@@ -1,5 +1,6 @@
 import test from 'tape-promise/tape'
 import BaseTest from "../../../BaseTest";
+import mongoose from "mongoose";
 
 class Register extends BaseTest {
   async run() {

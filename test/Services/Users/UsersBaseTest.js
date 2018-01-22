@@ -1,6 +1,8 @@
 import request from "supertest";
 import test from "tape-promise/tape";
 import BaseTest from "../../BaseTest";
+import moment from "moment";
+import mongoose from "mongoose";
 
 class UsersBaseTest extends BaseTest {
   async createTestUser(headers) {
@@ -28,6 +30,11 @@ class UsersBaseTest extends BaseTest {
       test.equal(typeof responseModel.lastName, "string");
       test.equal(typeof responseModel.email, "string");
       test.equal(typeof responseModel.role, "string");
+      test.equal(typeof responseModel.timeCreated, "string");
+      test.equal(moment(responseModel.timeCreated, moment.ISO_8601).isValid(), true);
+      test.equal(typeof responseModel.timeEdited, "string");
+      test.equal(moment(responseModel.timeEdited, moment.ISO_8601).isValid(), true);
+      test.equal(typeof responseModel.owner, "string");
 
       test.end();
     });

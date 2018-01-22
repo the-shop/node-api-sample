@@ -19,9 +19,9 @@ import AbstractAction from "../../../Framework/AbstractAction";
  *         description: Comment's ID
  *         required: true
  *         type: string
- *       - name: owner
+ *       - name: ownerId
  *         description: Comment owner 
- *         type: string
+ *         type: schema.types.objectid
  *         in: body
  *         required: true
  *       - name: content
@@ -70,7 +70,7 @@ class UpdateAction extends AbstractAction {
   async getActionInput(request) {
     this.getAcl().check("UPDATE_COMMENT");
 
-    if (typeof request.body.owner !== "string") {
+    if (typeof request.body.ownerId !== "string") {
       throw new InputMalformedError(
         "Comment owner is mandatory for this API call."
       );
@@ -83,10 +83,10 @@ class UpdateAction extends AbstractAction {
     }
 
     return {
-      id: request.params.id, 
-      owner: request.body.owner,
+      id: request.params.id,
+      ownerId: request.body.ownerId,
       content: request.body.content,
-    };
+  };
   }
 
   /**
@@ -94,26 +94,26 @@ class UpdateAction extends AbstractAction {
    */
   async handle({
     id, 
-    owner,
-    content,
-  }) {
-    this.trigger("EVENT_ACTION_COMMENT_UPDATE_MODEL_PRE");
+    ownerId, 
+    content, 
+    }) {
+    await this.trigger("EVENT_ACTION_COMMENT_UPDATE_MODEL_PRE");
 
     const model = await CommentsCollection.loadOne({ _id: id });
 
-    this.trigger("EVENT_ACTION_COMMENT_UPDATE_MODEL_LOADED", model);
+    await this.trigger("EVENT_ACTION_COMMENT_UPDATE_MODEL_LOADED", model);
 
     if (!model) {
-      this.trigger("EVENT_ACTION_COMMENT_UPDATE_MODEL_NOT_FOUND");
+      await this.trigger("EVENT_ACTION_COMMENT_UPDATE_MODEL_NOT_FOUND");
       throw new NotFoundError("Comment model not found.");
     }
   
-    model.owner = owner;
+    model.ownerId = ownerId;
     model.content = content;
 
-    await model.save();
+    await CommentsCollection.save(model);
 
-    this.trigger("EVENT_ACTION_COMMENT_UPDATE_MODEL_POST", model);
+    await this.trigger("EVENT_ACTION_COMMENT_UPDATE_MODEL_POST", model);
 
     return model;
   }

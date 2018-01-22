@@ -13,9 +13,9 @@ import CommentsCollection from "../Collections/Comments";
  *     consumes:
  *       - application/json
  *     parameters:
- *       - name: owner
+ *       - name: ownerId
  *         description: Comment owner 
- *         type: string
+ *         type: schema.types.objectid
  *         in: body
  *         required: true 
  *       - name: content
@@ -59,7 +59,7 @@ class CreateAction extends AbstractAction {
   async getActionInput(request) {
     this.getAcl().check("CREATE_COMMENT");
 
-    if (typeof request.body.owner !== "string") {
+    if (typeof request.body.ownerId !== "string") {
       throw new InputMalformedError(
         "Comment owner is mandatory for this API call."
       );
@@ -71,31 +71,34 @@ class CreateAction extends AbstractAction {
       );
     }
 
-    return { 
-      owner: request.body.owner,
+    return {
+      ownerId: request.body.ownerId,
       content: request.body.content,
-    };
+      owner: request.user._id.toString(),
+  };
   }
 
   /**
    * Actual handler for the API endpoint
    */
   async handle({ 
-    owner,
-    content,
+    ownerId, 
+    content, 
+    owner, 
   }) {
-    this.trigger("EVENT_ACTION_COMMENT_CREATE_MODEL_PRE");
+    await this.trigger("EVENT_ACTION_COMMENT_CREATE_MODEL_PRE");
 
-    const model = CommentsCollection.create({ 
-      owner,
-      content,
+    const model = CommentsCollection.create({
+      ownerId, 
+      content, 
+      owner, 
     });
 
-    this.trigger("EVENT_ACTION_COMMENT_CREATE_MODEL_CREATED", model);
+    await this.trigger("EVENT_ACTION_COMMENT_CREATE_MODEL_CREATED", model);
 
-    await model.save();
+    await CommentsCollection.save(model);
 
-    this.trigger("EVENT_ACTION_COMMENT_CREATE_MODEL_POST", model);
+    await this.trigger("EVENT_ACTION_COMMENT_CREATE_MODEL_POST", model);
 
     return model;
   }

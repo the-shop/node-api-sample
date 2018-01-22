@@ -1,5 +1,5 @@
 import request from "supertest";
-import test from 'tape-promise/tape'
+import test from "tape-promise/tape";
 import BaseTest from "../../../BaseTest";
 import UsersCollection from "../../../../src/Services/Users/Collections/Users";
 import PostsCollection from "../../../../src/Services/Posts/Collections/Posts";
@@ -32,7 +32,7 @@ class Statistics extends BaseTest {
       await post.save();
 
       const comment = CommentsCollection.create({
-        owner: this.getRandomizer().randomHex(10),
+        ownerId:  mongoose.Types.ObjectId().toString(),
         content: this.getRandomizer().randomHex(10),
       });
       await comment.save();

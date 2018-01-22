@@ -99,14 +99,14 @@ class PasswordChangeAction extends AbstractAction {
    * Actual handler for the API endpoint
    */
   async handle ({ password, user }) {
-    this.trigger("EVENT_ACTION_PASSWORD_CHANGE_PRE");
+    await this.trigger("EVENT_ACTION_PASSWORD_CHANGE_PRE");
 
     user.passResetTime = Math.round(new Date() / 1000);
     user.password = password;
 
     await UsersCollection.save(user);
 
-    this.trigger("EVENT_ACTION_PASSWORD_CHANGE_POST");
+    await this.trigger("EVENT_ACTION_PASSWORD_CHANGE_POST");
 
     return user;
   }

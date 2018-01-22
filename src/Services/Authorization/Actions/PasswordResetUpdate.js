@@ -81,25 +81,25 @@ class PasswordResetAction extends AbstractAction {
    * Actual handler for the API endpoint
    */
   async handle ({ token, password }) {
-    this.trigger("EVENT_ACTION_PASSWORD_RESET_PRE");
+    await this.trigger("EVENT_ACTION_PASSWORD_RESET_PRE");
 
     const user = await UsersCollection.loadOne({ passResetToken: token });
 
     if (!user) {
-      this.trigger("EVENT_ACTION_PASSWORD_RESET_USER_NOT_FOUND");
+      await this.trigger("EVENT_ACTION_PASSWORD_RESET_USER_NOT_FOUND");
       throw new NotFoundError("Token doesn't exist or has expired.");
     }
 
     try {
       user.password = password;
     } catch (tokenExpiredError) {
-      this.trigger("EVENT_ACTION_PASSWORD_RESET_TOKEN_EXPIRED");
+      await this.trigger("EVENT_ACTION_PASSWORD_RESET_TOKEN_EXPIRED");
       throw new NotFoundError(tokenExpiredError.message);
     }
 
     await UsersCollection.save(user);
 
-    this.trigger("EVENT_ACTION_PASSWORD_RESET_POST", user);
+    await this.trigger("EVENT_ACTION_PASSWORD_RESET_POST", user);
 
     return user;
   }

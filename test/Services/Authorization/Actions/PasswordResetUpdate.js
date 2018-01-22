@@ -3,6 +3,7 @@ import test from 'tape-promise/tape'
 import BaseTest from "../../../BaseTest";
 import UsersCollection from "../../../../src/Services/Users/Collections/Users";
 import config from "../../../../src/config";
+import mongoose from "mongoose";
 
 class PasswordResetUpdate extends BaseTest {
   async run() {
@@ -89,6 +90,9 @@ class PasswordResetUpdate extends BaseTest {
         lastName: this.getRandomizer().randomHex(1),
         email: this.getRandomEmail(),
         role: "admin",
+        timeCreated: new Date(),
+        timeEdited: new Date(),
+        owner:  mongoose.Types.ObjectId().toString(),
         password: "aaaaaa0!"
       });
       await user.save();
@@ -119,6 +123,9 @@ class PasswordResetUpdate extends BaseTest {
         lastName: this.getRandomizer().randomHex(1),
         email: this.getRandomEmail(),
         role: "admin",
+        timeCreated: new Date(),
+        timeEdited: new Date(),
+        owner:  mongoose.Types.ObjectId().toString(),
         password: "aaaaaa0!"
       });
       await user.save();

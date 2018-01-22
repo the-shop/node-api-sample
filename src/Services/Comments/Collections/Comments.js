@@ -26,7 +26,7 @@ class CommentCollection extends Collection {
    * @param sort
    * @param order
    */
-  static load(query = {}, fields = [], start = 0, end = 100, sort = "_id", order = "desc") {
+  static load(query = {}, fields = {}, start = 0, end = 100, sort = "_id", order = "desc") {
     const Comment = mongoose.model("Comment");
     return Collection.load(Comment, query, fields, start, end, sort,order);
   }

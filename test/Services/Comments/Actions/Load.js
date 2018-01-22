@@ -16,7 +16,7 @@ class Load extends CommentsBaseTest {
         .set("Authorization", headers.authorization)
         .query({
           query: JSON.stringify({
-            owner: comment.owner,
+            ownerId: comment.ownerId,
           }),
           search: JSON.stringify({
             content: comment.content,

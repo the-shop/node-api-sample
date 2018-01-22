@@ -33,6 +33,13 @@ const UserSchema = new Schema({
     default: "user",
     enum: ["admin", "user"],
   },
+  timeCreated: {
+    type: Date,
+  },
+  timeEdited: {
+    type: Date,
+  },
+  owner: { type: Schema.Types.ObjectId, ref: "User"},
   hashedPassword: {
     type: String
   },

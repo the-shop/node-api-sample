@@ -62,7 +62,7 @@ const config = {
       fromEmail: process.env.MAILCHIMP_CAMPAIGN_FROM_EMAIL
       ||  process.env.GENERAL_EMAIL_CONTACT_ADDRESS
       || "contact@company.com",
-      subject: process.env.MAILCHIMP_CAMPAIGN_SUBJECT,
+      subject: process.env.MAILCHIMP_CAMPAIGN_SUBJECT || "Campaign subject",
       language: process.env.MAILCHIMP_CAMPAIGN_LANGUAGE || "en-US",
     }
   },
@@ -81,6 +81,9 @@ const config = {
   },
   web: {
     uploadsDirectory: "uploads/"
+  },
+  application: {
+    ownerId: process.env.OWNER_ID || "aaaaaaaaaaaaaaaaaaaaaaaa"
   }
 };
 

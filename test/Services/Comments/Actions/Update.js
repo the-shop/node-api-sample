@@ -1,6 +1,7 @@
 import request from "supertest";
 import test from "tape-promise/tape";
 import CommentsBaseTest from "../CommentsBaseTest";
+import mongoose from "mongoose";
 
 class Update extends CommentsBaseTest {
   async run() {
@@ -17,7 +18,7 @@ class Update extends CommentsBaseTest {
       const responseObject = await request(this.express)
         .put("/api/v1/comments/" + comment.id)
         .send({
-          owner: comment.owner,
+          ownerId: comment.ownerId,
           content: comment.content,
         })
         .set("Authorization", headers.authorization);

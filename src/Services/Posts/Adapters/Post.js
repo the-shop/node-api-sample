@@ -1,4 +1,6 @@
 import AbstractAdapter from "../../../Framework/AbstractAdapter";
+import UsersCollection from "../../Users/Collections/Users";
+import UserAdapter from "../../Users/Adapters/User";
 
 /**
  * Post response schema
@@ -17,6 +19,15 @@ import AbstractAdapter from "../../../Framework/AbstractAdapter";
  *         type: string
  *       content:
  *         type: string
+ *       timeCreated:
+ *         type: string
+ *         format: date
+ *       timeEdited:
+ *         type: string
+ *         format: date
+ *       owner:
+ *         type: object
+ *         $ref: '#/definitions/UserModel'
  *
  *   PostResponse:
  *     type: object
@@ -72,10 +83,24 @@ class Post extends AbstractAdapter {
     const out = {};
     const modelData = model.toJSON();
 
+    const userAdapter = new UserAdapter();
+
+    let owner = null;
+    if (modelData.owner !== undefined) {
+      owner = null;
+      const ownerModel = await UsersCollection.loadOne({id: modelData.owner});
+      if (ownerModel) {
+        owner = await userAdapter.adapt(ownerModel);
+      }
+    }
 
     out.id = modelData.id;
     out.title = modelData.title === undefined ? null : modelData.title;
     out.content = modelData.content === undefined ? null : modelData.content;
+    out.timeCreated = modelData.timeCreated === undefined ? null : modelData.timeCreated;
+    out.timeEdited = modelData.timeEdited === undefined ? null : modelData.timeEdited;
+    out.owner = modelData.owner === undefined ? null : modelData.owner;
+    out.ownerPopulated = owner;
 
     return out;
   }

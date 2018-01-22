@@ -26,7 +26,7 @@ class PostCollection extends Collection {
    * @param sort
    * @param order
    */
-  static load(query = {}, fields = [], start = 0, end = 100, sort = "_id", order = "desc") {
+  static load(query = {}, fields = {}, start = 0, end = 100, sort = "_id", order = "desc") {
     const Post = mongoose.model("Post");
     return Collection.load(Post, query, fields, start, end, sort,order);
   }

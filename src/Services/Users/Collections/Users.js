@@ -26,7 +26,7 @@ class UserCollection extends Collection {
    * @param sort
    * @param order
    */
-  static load(query = {}, fields = [], start = 0, end = 100, sort = "_id", order = "desc") {
+  static load(query = {}, fields = {}, start = 0, end = 100, sort = "_id", order = "desc") {
     const User = mongoose.model("User");
     return Collection.load(User, query, fields, start, end, sort,order);
   }

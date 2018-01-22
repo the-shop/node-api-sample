@@ -90,7 +90,7 @@ class LoadAction extends AbstractAction {
    * Actual handler for the API endpoint
    */
   async handle ({ query, fields, start, end, sort, order }, expressReq, expressRes) {
-    this.trigger("EVENT_ACTION_COMMENT_LOAD_MODELS_PRE");
+    await this.trigger("EVENT_ACTION_COMMENT_LOAD_MODELS_PRE");
 
     const models = await CommentsCollection.load(
       query,
@@ -101,7 +101,7 @@ class LoadAction extends AbstractAction {
       order
     );
 
-    this.trigger("EVENT_ACTION_COMMENT_LOAD_MODELS_LOADED", models);
+    await this.trigger("EVENT_ACTION_COMMENT_LOAD_MODELS_LOADED", models);
 
     expressRes.header("X-Total-Count", await CommentsCollection.count(query));
 

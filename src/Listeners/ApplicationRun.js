@@ -1,3 +1,4 @@
+import newrelic from "newrelic";
 import AbstractListener from "../Framework/AbstractListener";
 import Database from "../Database/Database";
 import config from "../config";
@@ -148,20 +149,28 @@ class ApplicationRun extends AbstractListener {
           errors.push(err.message ? err.message : "Unknown error occurred.");
         }
 
+        if (code === 500) {
+          newrelic.noticeError(`HTTP 500 errors: ${JSON.stringify(response.errors)}`,{ err: err.message});
+        }
+
         return res.status(code).json(response);
       });
 
     /**
      * 404 middleware since no middleware responded
      */
+    const notFoundHandler = (req, res) => {
+      this.getApplication()
+        .log(`Route "${req.url}" not found.`);
+      res.status(404).json({
+        error: true,
+        errors: [ "Route not found" ]
+      });
+    };
+
     this.getApplication()
       .getExpress()
-      .use(function (req, res) {
-        res.status(404).json({
-          error: true,
-          errors: [ "Route not found" ]
-        });
-      });
+      .use(notFoundHandler);
   }
 }
 

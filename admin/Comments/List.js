@@ -3,6 +3,7 @@ import {
   Datagrid,
   EditButton,
   List,
+  ReferenceField,
   TextField,
 } from "admin-on-rest/lib/mui";
 
@@ -33,12 +34,13 @@ const ListPage = props => (
   >
     <Datagrid>
       <TextField source="id" elStyle={idFieldStyle} />
-
-      <TextField
-        source="owner"
-        label="Comment owner"
-        elStyle={fieldStyle}
-      />
+      <ReferenceField
+        label="Owner id"
+        source="ownerId"
+        reference="users"
+      >
+        <TextField source="id" />
+      </ReferenceField>
       <TextField
         source="content"
         label="Post content"

@@ -17,6 +17,13 @@ const PostSchema = new Schema({
     required: [true, "Post content has to be defined"],
     maxlength: 5000,
   },
+  timeCreated: {
+    type: Date,
+  },
+  timeEdited: {
+    type: Date,
+  },
+  owner: { type: Schema.Types.ObjectId, ref: "User"},
 });
 
 /**

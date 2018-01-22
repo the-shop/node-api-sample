@@ -93,42 +93,45 @@ class CreateAction extends AbstractAction {
       );
     }
 
-   // Field "email" has "unique" index applied to it so check if value already taken
-   if (await UsersCollection.loadOne({email: request.body.email}) !== null) {
-     throw new InputMalformedError("Email is taken.");
-   }
+    // Field "email" has "unique" index applied to it so check if value already taken
+    if (await UsersCollection.loadOne({email: request.body.email}) !== null) {
+      throw new InputMalformedError("Email is taken.");
+    }
 
-    return { 
+    return {
       firstName: request.body.firstName,
       lastName: request.body.lastName,
       email: request.body.email,
       role: request.body.role,
-    };
+      owner: request.user._id.toString(),
+  };
   }
 
   /**
    * Actual handler for the API endpoint
    */
   async handle({ 
-    firstName,
-    lastName,
-    email,
-    role,
+    firstName, 
+    lastName, 
+    email, 
+    role, 
+    owner, 
   }) {
-    this.trigger("EVENT_ACTION_USER_CREATE_MODEL_PRE");
+    await this.trigger("EVENT_ACTION_USER_CREATE_MODEL_PRE");
 
-    const model = UsersCollection.create({ 
-      firstName,
-      lastName,
-      email,
-      role,
+    const model = UsersCollection.create({
+      firstName, 
+      lastName, 
+      email, 
+      role, 
+      owner, 
     });
 
-    this.trigger("EVENT_ACTION_USER_CREATE_MODEL_CREATED", model);
+    await this.trigger("EVENT_ACTION_USER_CREATE_MODEL_CREATED", model);
 
-    await model.save();
+    await UsersCollection.save(model);
 
-    this.trigger("EVENT_ACTION_USER_CREATE_MODEL_POST", model);
+    await this.trigger("EVENT_ACTION_USER_CREATE_MODEL_POST", model);
 
     return model;
   }

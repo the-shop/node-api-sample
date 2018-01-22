@@ -1,4 +1,6 @@
 import AbstractAdapter from "../../../Framework/AbstractAdapter";
+import UsersCollection from "../../Users/Collections/Users";
+import UserAdapter from "../../Users/Adapters/User";
 
 /**
  * User response schema
@@ -24,6 +26,15 @@ import AbstractAdapter from "../../../Framework/AbstractAdapter";
  *       role:
  *         type: string
  *         enum: ["admin", "user"]
+ *       timeCreated:
+ *         type: string
+ *         format: date
+ *       timeEdited:
+ *         type: string
+ *         format: date
+ *       owner:
+ *         type: object
+ *         $ref: '#/definitions/UserModel'
  *
  *   UserResponse:
  *     type: object
@@ -79,12 +90,26 @@ class User extends AbstractAdapter {
     const out = {};
     const modelData = model.toJSON();
 
+    const userAdapter = new UserAdapter();
+
+    let owner = null;
+    if (modelData.owner !== undefined) {
+      owner = null;
+      const ownerModel = await UsersCollection.loadOne({id: modelData.owner});
+      if (ownerModel) {
+        owner = await userAdapter.adapt(ownerModel);
+      }
+    }
 
     out.id = modelData.id;
     out.firstName = modelData.firstName === undefined ? null : modelData.firstName;
     out.lastName = modelData.lastName === undefined ? null : modelData.lastName;
     out.email = modelData.email === undefined ? null : modelData.email;
     out.role = modelData.role === undefined ? "user" : modelData.role;
+    out.timeCreated = modelData.timeCreated === undefined ? null : modelData.timeCreated;
+    out.timeEdited = modelData.timeEdited === undefined ? null : modelData.timeEdited;
+    out.owner = modelData.owner === undefined ? null : modelData.owner;
+    out.ownerPopulated = owner;
 
     return out;
   }

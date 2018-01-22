@@ -42,7 +42,6 @@ const ListPage = props => (
   >
     <Datagrid>
       <TextField source="id" elStyle={idFieldStyle} />
-
       <TextField
         source="firstName"
         label="User's first name"

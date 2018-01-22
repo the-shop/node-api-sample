@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 import FrameworkError from "./Errors/FrameworkError";
+import config from "../config";
 
 /**
  * Adapter for mongoose's interfaces
@@ -18,7 +19,7 @@ class Collection {
    * @param sort
    * @param order
    */
-  static load(Model, query = {}, fields = [], start = 0, end = 10, sort = "_id", order = "desc") {
+  static load(Model, query = {}, fields = {}, start = 0, end = 10, sort = "_id", order = "desc") {
     // Convert id to _id
     if (query.id) {
       query._id = query.id;
@@ -38,15 +39,22 @@ class Collection {
       queryOptions.limit = limit;
     }
 
+    const fieldsSelectObject = {};
+    Object.keys(fields).map(field => {
+      let selectorValue = 1;
+
+      if (typeof fields[field] === "object" && fields[field]["$slice"]) {
+        selectorValue = { $slice: fields[field]["$slice"] };
+      }
+
+      fieldsSelectObject[field] = selectorValue;
+    });
+
+    const builtQuery = Model.find(query, fieldsSelectObject);
+
     let sortKey = sort.trim();
 
-    const builtQuery = Model.find(query)
-      .setOptions(queryOptions);
-
-    if (fields.length > 0) {
-      builtQuery.select(fields);
-    }
-
+    builtQuery.setOptions(queryOptions);
     if (sortKey && order) {
       if (sortKey === "id") {
         sortKey = "_id";
@@ -93,6 +101,14 @@ class Collection {
    * @returns {Promise.<*>}
    */
   static async save(Model) {
+    if (typeof Model.owner !== "object" || mongoose.Types.ObjectId.isValid(Model.owner) === false) {
+      Model.owner = mongoose.Types.ObjectId(config.application.ownerId).toString();
+    }
+    if (typeof Model.timeCreated !== "object") {
+      Model.timeCreated = new Date().toISOString();
+    }
+    Model.timeEdited = new Date().toISOString();
+
     return await Model.save();
   }
 

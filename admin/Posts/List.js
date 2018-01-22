@@ -33,7 +33,6 @@ const ListPage = props => (
   >
     <Datagrid>
       <TextField source="id" elStyle={idFieldStyle} />
-
       <TextField
         source="title"
         label="Post title"

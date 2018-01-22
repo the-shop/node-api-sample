@@ -6,15 +6,19 @@ const Schema = mongoose.Schema;
  * CommentSchema definition
  */
 const CommentSchema = new Schema({
-  owner: {
-    type: String,
-    required: [true, "Comment owner has to be defined"],
-  },
+  ownerId: { type: Schema.Types.ObjectId, ref: "User"},
   content: {
     type: String,
     required: [true, "Post content has to be defined"],
     maxlength: 5000,
   },
+  timeCreated: {
+    type: Date,
+  },
+  timeEdited: {
+    type: Date,
+  },
+  owner: { type: Schema.Types.ObjectId, ref: "User"},
 });
 
 /**

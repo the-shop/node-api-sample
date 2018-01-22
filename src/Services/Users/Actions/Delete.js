@@ -67,20 +67,20 @@ class LoadOneAction extends AbstractAction {
    * Actual handler for the API endpoint
    */
   async handle ({id}) {
-    this.trigger("EVENT_ACTION_USER_DELETE_MODEL_PRE");
+    await this.trigger("EVENT_ACTION_USER_DELETE_MODEL_PRE");
 
     const model = await UsersCollection.loadOne({_id: id});
 
-    this.trigger("EVENT_ACTION_USER_DELETE_MODEL_LOADED", model);
+    await this.trigger("EVENT_ACTION_USER_DELETE_MODEL_LOADED", model);
 
     if (!model) {
-      this.trigger("EVENT_ACTION_USER_DELETE_MODEL_NOT_FOUND");
+      await this.trigger("EVENT_ACTION_USER_DELETE_MODEL_NOT_FOUND");
       throw new NotFoundError("User model not found.");
     }
 
     await UsersCollection.delete({_id: id});
 
-    this.trigger("EVENT_ACTION_USER_DELETE_MODEL_POST", model);
+    await this.trigger("EVENT_ACTION_USER_DELETE_MODEL_POST", model);
 
     return model;
   }

@@ -42,9 +42,7 @@ class Acl {
 
     const failedRule = rules.find(rule => {
       queryFilter = Object.assign(queryFilter, rule.getQueryFilter());
-      allowedFields = allowedFields.concat(rule.getAllowedFields());
-      // Unique list of fields
-      allowedFields = [... new Set(allowedFields)];
+      allowedFields = Object.assign(allowedFields, rule.getAllowedFields());
 
       return rule.permission !== "allow";
     });

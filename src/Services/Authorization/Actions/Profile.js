@@ -72,7 +72,7 @@ class ProfileAction extends AbstractAction {
    * Actual handler for the API endpoint
    */
   async handle({ user }) {
-    this.trigger("EVENT_ACTION_PROFILE_GET");
+    await this.trigger("EVENT_ACTION_PROFILE_GET");
 
     return user;
   }

@@ -67,28 +67,43 @@ class EventsRegistry {
    * @param payload
    * @returns {Array}
    */
-  trigger (eventName, payload = {}) {
+
+  async trigger (eventName, payload = {}) {
     this.getApplication().log("Triggering event %s", eventName);
 
     let responses = [];
 
     if (this.registeredListeners[eventName]) {
-      responses = this.registeredListeners[eventName].map(async listener => {
-        if (listener instanceof AbstractListener === false) {
-          this.getApplication().logError("Listener must be instance of AbstractListener");
-          return false;
-        }
+      let syncPromises = [];
+      try {
+        responses = this.registeredListeners[eventName].map(async listener => {
+          if (listener instanceof AbstractListener === false) {
+            this.getApplication().logError("Listener must be instance of AbstractListener");
+            return false;
+          }
 
-        listener.setApplication(this.getApplication());
+          listener.setApplication(this.getApplication());
 
-        this.triggeredEvents.push({
-          eventName,
-          listener: listener.constructor.name,
-          timestampMs: (new Date()).getTime()
+          this.triggeredEvents.push({
+            eventName,
+            listener: listener.constructor.name,
+            timestampMs: (new Date()).getTime()
+          });
+
+          if (listener.isAsync() === true) {
+            return listener.handle(payload);
+          }
+
+          const syncListener = listener.handle(payload);
+          syncPromises.push(syncListener);
+          return syncListener;
         });
 
-        return await listener.handle(payload);
-      });
+        await Promise.all(syncPromises);
+
+      } catch (listenerError) {
+        throw listenerError;
+      }
     }
 
     return responses;

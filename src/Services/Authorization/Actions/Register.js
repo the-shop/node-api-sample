@@ -113,7 +113,7 @@ class RegisterAction extends AbstractAction {
     user.password = params.password;
     user.save();
 
-    this.trigger("EVENT_ACTION_REGISTER_USER_POST", user);
+    await this.trigger("EVENT_ACTION_REGISTER_USER_POST", user);
 
     const token = jwt.sign({ email: user.email }, config.jwt.secret);
     res.header("Authorization", `Bearer ${token}`);

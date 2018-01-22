@@ -39,7 +39,7 @@ class StatisticsAction extends AbstractAction {
   static IS_PUBLIC = false;
 
   async handle({ user }) {
-    this.trigger("EVENT_ACTION_GET_STATISTICS_PRE", user);
+    await this.trigger("EVENT_ACTION_GET_STATISTICS_PRE", user);
 
     const stats = {
       totals: {
@@ -55,7 +55,7 @@ class StatisticsAction extends AbstractAction {
       }
     };
 
-    this.trigger("EVENT_ACTION_GET_STATISTICS_POST", stats);
+    await this.trigger("EVENT_ACTION_GET_STATISTICS_POST", stats);
 
     return stats;
   }

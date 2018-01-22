@@ -83,10 +83,10 @@ class UpdateAction extends AbstractAction {
     }
 
     return {
-      id: request.params.id, 
+      id: request.params.id,
       title: request.body.title,
       content: request.body.content,
-    };
+  };
   }
 
   /**
@@ -94,26 +94,26 @@ class UpdateAction extends AbstractAction {
    */
   async handle({
     id, 
-    title,
-    content,
-  }) {
-    this.trigger("EVENT_ACTION_POST_UPDATE_MODEL_PRE");
+    title, 
+    content, 
+    }) {
+    await this.trigger("EVENT_ACTION_POST_UPDATE_MODEL_PRE");
 
     const model = await PostsCollection.loadOne({ _id: id });
 
-    this.trigger("EVENT_ACTION_POST_UPDATE_MODEL_LOADED", model);
+    await this.trigger("EVENT_ACTION_POST_UPDATE_MODEL_LOADED", model);
 
     if (!model) {
-      this.trigger("EVENT_ACTION_POST_UPDATE_MODEL_NOT_FOUND");
+      await this.trigger("EVENT_ACTION_POST_UPDATE_MODEL_NOT_FOUND");
       throw new NotFoundError("Post model not found.");
     }
   
     model.title = title;
     model.content = content;
 
-    await model.save();
+    await PostsCollection.save(model);
 
-    this.trigger("EVENT_ACTION_POST_UPDATE_MODEL_POST", model);
+    await this.trigger("EVENT_ACTION_POST_UPDATE_MODEL_POST", model);
 
     return model;
   }

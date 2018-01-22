@@ -5,6 +5,7 @@ import {
   SimpleForm,
   TextInput,
 } from "admin-on-rest/lib/mui";
+import { required } from "admin-on-rest";
 
 const EditPage = props => (
   <Edit
@@ -16,10 +17,12 @@ const EditPage = props => (
       <TextInput
         source="title"
         label="Post title"
+        validate={required}
       />
       <TextInput
         source="content"
         label="Post content"
+        validate={required}
       />
     </SimpleForm>
   </Edit>

@@ -102,7 +102,7 @@ class Mixed extends BaseTest {
         );
       } catch (error) {
         test.equal(error.code, 400);
-        test.equal(error.message, `Invalid type provided for "query operator" '<' - 'test'.`);
+        test.equal(error.message, `Invalid type provided for field 'test', "query operator" - '<', "value" - '100'.`);
       }
 
       test.end();
@@ -125,7 +125,51 @@ class Mixed extends BaseTest {
         );
       } catch (error) {
         test.equal(error.code, 400);
-        test.equal(error.message, `Invalid type provided for "query operator" '<' - 'test'.`);
+        test.equal(error.message, `Invalid type provided for field 'test', "query operator" - '<', "value" - 'TESTING'.`);
+      }
+
+      test.end();
+    });
+
+    test("MIXED - parse - operators object - 'OR' operator - number definition - SUCCESS", async test => {
+      const mixedParser = new MixedParser();
+      const modelSchema = {
+        instance: "Number"
+      };
+
+      const response = mixedParser.parse(
+        "test",
+        {
+          "or": [1, 10, 55, 303]
+        },
+        modelSchema
+      );
+
+      test.deepEqual(response, {
+        "test": {
+          "$in": [1, 10, 55, 303]
+        }
+      });
+      test.end();
+    });
+
+    test("MIXED - parse - operators object - 'OR' operator - number definition - FAIL", async test => {
+      const mixedParser = new MixedParser();
+      const modelSchema = {
+        instance: "Number"
+      };
+
+      try {
+        mixedParser.parse(
+          "test",
+          {
+            "or": [1, 10, 55, "test"]
+          },
+          modelSchema
+        );
+      } catch (error) {
+        test.equal(error.code, 400);
+        test.equal(error.message, `Invalid type provided for field 'test', "query operator" - 'or', "value" - 'test'.`);
       }
 
       test.end();

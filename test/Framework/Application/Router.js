@@ -5,8 +5,8 @@ import Application from "../../../src/Application";
 import express from "express";
 
 class Router extends BaseTest {
-  constructor() {
-    super();
+  constructor(application) {
+    super(application);
     this.publicRoutes = [];
     this.privateRoutes = [];
   }

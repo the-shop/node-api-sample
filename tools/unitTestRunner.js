@@ -45,8 +45,7 @@ class RunTests extends AbstractListener {
   runSingleTest (testFilePath) {
     this.getApplication().log("Running %s/%s", testFilePath);
     const className = require(testFilePath).default;
-    const instance = new className();
-    instance.app = app;
+    const instance = new className(app);
     instance.express = app.express;
     if (typeof instance.run === "function") {
       instance.run();

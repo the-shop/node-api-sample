@@ -3,6 +3,8 @@ import React, { Component } from "react";
 import { Admin, Resource } from "admin-on-rest";
 import { Delete } from "admin-on-rest/lib/mui";
 
+import "../src/Helpers/String";
+
 import routes from "./AORUpdates/routes";
 import Login from "./AORUpdates/Login";
 

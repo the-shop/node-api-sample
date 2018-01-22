@@ -1,6 +1,7 @@
 import request from "supertest";
 import test from "tape-promise/tape";
 import PostsBaseTest from "../PostsBaseTest";
+import mongoose from "mongoose";
 
 class Update extends PostsBaseTest {
   async run() {

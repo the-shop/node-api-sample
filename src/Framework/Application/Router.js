@@ -70,11 +70,11 @@ class Router {
 
               const auth = this.getApplication().getAcl().getAuthorization();
               auth.setAuthType("user")
-                .setId(isPublic ? "everyone" : "unauthorized");
+                .setId(isPublic ? "$everyone" : "$unauthorized");
 
               if (req.user) {
                 auth.setAuthType("user")
-                  .setId("authorized");
+                  .setId("$authorized");
 
                 if (req.user.role) {
                   auth.setAuthType("role")
@@ -140,7 +140,7 @@ class Router {
           };
 
           if (isPublic) {
-            this.getApplication().express[httpMethod.toLowerCase()](fullRoutePath, routeHandler);
+            this.getApplication().express[httpMethod.toLowerCase()](fullRoutePath, this.checkAuthenticated, routeHandler);
           } else {
             this.getApplication().express[httpMethod.toLowerCase()](fullRoutePath, this.ensureAuthenticated, routeHandler);
           }
@@ -151,6 +151,37 @@ class Router {
         });
       });
     });
+  }
+
+  checkAuthenticated(req, res, next) {
+    if (req.session && req.session.passport) {
+      // User is using a valid session, proceed
+      return next();
+    }
+
+    try {
+      return passport.authenticate("jwt",
+        (err, user) => {
+          if (err) {
+            // TODO: check status code and response format
+            return next(err);
+          }
+
+          if (!user) {
+            return next();
+          }
+
+          req.logIn(user, (err) => {
+            // TODO: check status code and response format
+            if (err) {
+              return next(err);
+            }
+          });
+          return next();
+        })(req, res, next);
+    } catch (error) {
+      throw new UnauthorizedError(error.message);
+    }
   }
 
   ensureAuthenticated (req, res, next) {

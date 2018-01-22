@@ -19,6 +19,7 @@ class AbstractListener {
    */
   constructor () {
     this.name = this.constructor.name;
+    this.sync = true;
     if (this.name === "AbstractListener") {
       throw new FrameworkError("Can't instantiate AbstractListener");
     }
@@ -33,6 +34,23 @@ class AbstractListener {
     throw new FrameworkError(
       `${this.name} has to implement "handle(payload)" method`
     );
+  }
+
+  /**
+   * Set listener as asynchronous
+   * @returns {AbstractListener}
+   */
+  setAsync() {
+    this.sync = false;
+    return this;
+  }
+
+  /**
+   * Get listener status, true if listener is synchronous and false otherwise
+   * @returns {boolean}
+   */
+  isAsync() {
+    return this.sync === false;
   }
 
   /**

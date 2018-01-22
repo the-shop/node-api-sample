@@ -110,12 +110,12 @@ class UpdateAction extends AbstractAction {
     }
 
     return {
-      id: request.params.id, 
+      id: request.params.id,
       firstName: request.body.firstName,
       lastName: request.body.lastName,
       email: request.body.email,
       role: request.body.role,
-    };
+  };
   }
 
   /**
@@ -123,19 +123,19 @@ class UpdateAction extends AbstractAction {
    */
   async handle({
     id, 
-    firstName,
-    lastName,
-    email,
-    role,
-  }) {
-    this.trigger("EVENT_ACTION_USER_UPDATE_MODEL_PRE");
+    firstName, 
+    lastName, 
+    email, 
+    role, 
+    }) {
+    await this.trigger("EVENT_ACTION_USER_UPDATE_MODEL_PRE");
 
     const model = await UsersCollection.loadOne({ _id: id });
 
-    this.trigger("EVENT_ACTION_USER_UPDATE_MODEL_LOADED", model);
+    await this.trigger("EVENT_ACTION_USER_UPDATE_MODEL_LOADED", model);
 
     if (!model) {
-      this.trigger("EVENT_ACTION_USER_UPDATE_MODEL_NOT_FOUND");
+      await this.trigger("EVENT_ACTION_USER_UPDATE_MODEL_NOT_FOUND");
       throw new NotFoundError("User model not found.");
     }
   
@@ -144,9 +144,9 @@ class UpdateAction extends AbstractAction {
     model.email = email;
     model.role = role;
 
-    await model.save();
+    await UsersCollection.save(model);
 
-    this.trigger("EVENT_ACTION_USER_UPDATE_MODEL_POST", model);
+    await this.trigger("EVENT_ACTION_USER_UPDATE_MODEL_POST", model);
 
     return model;
   }

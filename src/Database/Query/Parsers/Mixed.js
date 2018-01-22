@@ -7,7 +7,8 @@ class ObjectParser {
       "<": "$lt",
       ">=": "$gte",
       "<=": "$lte",
-      "=": "$eq"
+      "=": "$eq",
+      "or": "$in"
     };
   }
 
@@ -22,10 +23,25 @@ class ObjectParser {
         if (operators.includes(keyName)) {
           operatorsObject = true;
           const definedFieldType = attributeDefinedSchema.instance.toLowerCase();
-          if (typeof attributeValue[keyName] === definedFieldType) {
+
+          // Support $or operator - array of values
+          if (keyName === "or" && Array.isArray(attributeValue[keyName])) {
+            attributeValue[keyName].map(arrayValue => {
+              if (typeof arrayValue !== definedFieldType) {
+                throw new InputMalformedError(
+                  `Invalid type provided for field '${attributeName}', "query operator" - '${keyName}', "value" - '${arrayValue}'.`
+                );
+              }
+            });
             parsedAtt[attributeName][this.operators[keyName]] = attributeValue[keyName];
+            // All other operators
+          } else if (keyName !== "or" && typeof attributeValue[keyName] === definedFieldType) {
+            parsedAtt[attributeName][this.operators[keyName]] = attributeValue[keyName];
+            // If all fail throw exception
           } else {
-            throw new InputMalformedError(`Invalid type provided for "query operator" '${keyName}' - '${attributeName}'.`);
+            throw new InputMalformedError(
+              `Invalid type provided for field '${attributeName}', "query operator" - '${keyName}', "value" - '${attributeValue[keyName]}'.`
+            );
           }
         }
       });

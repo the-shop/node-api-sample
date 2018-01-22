@@ -24,9 +24,14 @@ class AbstractAction {
    * Shortcut to triggering events from actions
    */
   async trigger() {
-    await this.getApplication()
-      .getEventsRegistry()
-      .trigger(...arguments);
+    try {
+      return await this.getApplication()
+        .getEventsRegistry()
+        .trigger(...arguments);
+    } catch (error) {
+      this.getApplication().logError("Issue with listener.", error.message);
+      throw error;
+    }
   }
 
   /**
