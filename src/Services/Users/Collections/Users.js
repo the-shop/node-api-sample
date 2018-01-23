@@ -1,6 +1,7 @@
 import mongoose from "mongoose";
 import Collection from "../../../Framework/Collection";
 import Query from "../../../Database/Query";
+import CommentCollection from "../../Comments/Collections/Comments";
 
 class UserCollection extends Collection {
   /**
@@ -55,11 +56,21 @@ class UserCollection extends Collection {
   }
 
   /**
-   * Delete model implementation using mongoose's remove() method
+   * Delete model implementation using mongoose's remove() method and all references on that model
    */
-  static delete(query = {}) {
+  static async delete(query = {}) {
     const User = mongoose.model("User");
-    return Collection.delete(User, query);
+    const deleteResponse = await Collection.delete(User, query);
+
+    const commentsQuery =
+      { ownerId: { $eq: query._id } };
+    const comments = await CommentCollection.load(commentsQuery);
+    await Promise.all(comments.map(async model => {
+      model["ownerId"] = undefined;
+      await CommentCollection.save(model);
+    }));
+
+    return deleteResponse;
   }
 
   /**

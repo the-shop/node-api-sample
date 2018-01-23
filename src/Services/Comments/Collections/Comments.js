@@ -55,11 +55,13 @@ class CommentCollection extends Collection {
   }
 
   /**
-   * Delete model implementation using mongoose's remove() method
+   * Delete model implementation using mongoose's remove() method and all references on that model
    */
-  static delete(query = {}) {
+  static async delete(query = {}) {
     const Comment = mongoose.model("Comment");
-    return Collection.delete(Comment, query);
+    const deleteResponse = await Collection.delete(Comment, query);
+
+    return deleteResponse;
   }
 
   /**

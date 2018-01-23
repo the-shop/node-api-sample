@@ -1,13 +1,10 @@
 import request from "supertest";
 import Randomizer from "../src/Helpers/Randomizer";
-import { MailChimp } from "./ListenerEventConstants";
-import mongoose from "mongoose";
 
 class BaseTest {
   constructor(application) {
     this.setApplication(application);
     this.randomizer = new Randomizer();
-    this.removeMailChimpListener();
   }
 
   getRandomizer() {
@@ -35,7 +32,7 @@ class BaseTest {
       response,
       headers: response.headers,
       user: response.body.model,
-    }
+    };
   }
 
   getRandomEmail() {
@@ -48,18 +45,6 @@ class BaseTest {
 
   getApplication() {
     return this.application;
-  }
-
-  removeMailChimpListener() {
-    // Remove mailchimp sync listener from registered events
-    const eventsRegistry = this.getApplication().getEventsRegistry();
-    const registeredListeners = eventsRegistry.getAllRegistered();
-    MailChimp.map(hook => {
-      if (Array.isArray(registeredListeners[hook])) {
-        registeredListeners[hook] = registeredListeners[hook].filter(listener => listener.constructor.name !== "SyncUserWithMailChimp");
-      }
-    });
-    eventsRegistry.registeredListeners = registeredListeners;
   }
 }
 

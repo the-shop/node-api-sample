@@ -26,7 +26,7 @@ Following services are set up:
 
 Documentation is generated from inline [Swagger](https://swagger.io/) annotations.
 
-Documentation is available at: [http://localhost:3030/api-docs/](http://localhost:3030/api-docs/)
+Documentation is available at: [http://localhost:3030/api-docs/](http://localhost:3030/api-docs/) when API is started.
 
 ## Repository setup
 
@@ -80,7 +80,7 @@ information.
 
 Project also uses [Admin on REST](https://marmelab.com/admin-on-rest/) React library to provide data administration interface.
 
-You can access it at: [http://localhost:3030/admin](http://localhost:3030/admin)
+You can access it at: [http://localhost:3030/admin](http://localhost:3030/admin) when API is running.
 
 ## Events
 

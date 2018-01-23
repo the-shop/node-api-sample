@@ -55,11 +55,13 @@ class PostCollection extends Collection {
   }
 
   /**
-   * Delete model implementation using mongoose's remove() method
+   * Delete model implementation using mongoose's remove() method and all references on that model
    */
-  static delete(query = {}) {
+  static async delete(query = {}) {
     const Post = mongoose.model("Post");
-    return Collection.delete(Post, query);
+    const deleteResponse = await Collection.delete(Post, query);
+
+    return deleteResponse;
   }
 
   /**
