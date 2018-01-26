@@ -1,6 +1,4 @@
 dist/
-!uploads/.gitkeep
-uploads/
 public/
 .env
 node_modules/

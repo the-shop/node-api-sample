@@ -2,7 +2,6 @@ import request from "supertest";
 import test from "tape-promise/tape";
 import BaseTest from "../../BaseTest";
 import moment from "moment";
-import mongoose from "mongoose";
 
 class PostsBaseTest extends BaseTest {
   async createTestPost(headers) {
@@ -11,15 +10,15 @@ class PostsBaseTest extends BaseTest {
       .post("/api/v1/posts")
       .set("Authorization", authorization)
       .send({
-        title: this.getRandomizer().randomHex(1),
-        content: this.getRandomizer().randomHex(10),
+        title: this.getRandomizer().randomString(1),
+        content: this.getRandomizer().randomString(1000),
       });
 
     return {
       response,
       headers: response.headers,
       post: response.body.model,
-    }
+    };
   }
 
   validateModelResponseFields(responseModel) {

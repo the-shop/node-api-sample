@@ -14,7 +14,7 @@ import TextField from "material-ui/TextField";
 import LockIcon from "material-ui/svg-icons/action/lock-outline";
 import { cyan500, pinkA200 } from "material-ui/styles/colors";
 
-import { Notification, translate, userLogin as userLoginAction } from "admin-on-rest";
+import { Notification, translate, showNotification } from "admin-on-rest";
 
 const styles = {
   main: {
@@ -41,14 +41,6 @@ const styles = {
     width: "100%",
     textAlign: "center",
     display: "block"
-  },
-  forgotPassword: {
-    width: "100%",
-    textAlign: "center",
-    display: "block",
-    color: "black",
-    textDecoration: "none",
-    fontSize: "14px"
   }
 };
 
@@ -72,11 +64,34 @@ const renderInput = ({ meta: { touched, error } = {}, input: { ...inputProps }, 
     fullWidth
   />;
 
-class Login extends Component {
+class PasswordResetRequest extends Component {
 
-  login = ({ username, password }) => {
-    const { userLogin, location } = this.props;
-    userLogin({ username, password }, location.state ? location.state.nextPathname : "/");
+  passwordResetRequest = ({ email }) => {
+    const { showNotification } = this.props;
+
+    const headers = new Headers();
+    headers.set("Content-Type", "application/json");
+
+    fetch("/api/v1/password-reset-request",
+      {
+        method: "POST",
+        headers,
+        body: JSON.stringify({
+          email
+        })
+      }
+    ).then((response) => response.json())
+      .then((response) => {
+        if (!response.error) {
+          showNotification("aor.notification.passwordEmailConfirmation");
+          this.props.history.push("/login");
+        } else {
+          showNotification(response.errors.join(","), "warning");
+        }
+      })
+      .catch((e) => {
+        console.error(e); // eslint-disable-line
+      });
   };
 
   render() {
@@ -90,34 +105,31 @@ class Login extends Component {
             <div style={styles.avatar}>
               <Avatar backgroundColor={accent1Color} icon={<LockIcon />} size={60} />
             </div>
-            <form onSubmit={handleSubmit(this.login)}>
+            <form onSubmit={handleSubmit(this.passwordResetRequest)}>
               <div style={styles.form}>
                 <div style={styles.input} >
                   <Field
-                    name="username"
+                    name="email"
                     component={renderInput}
                     floatingLabelText={translate("aor.auth.email")}
                   />
                 </div>
-                <div style={styles.input}>
-                  <Field
-                    name="password"
-                    component={renderInput}
-                    floatingLabelText={translate("aor.auth.password")}
-                    type="password"
-                  />
-                </div>
               </div>
               <CardActions>
-                <RaisedButton type="submit" primary disabled={submitting} label={translate("aor.auth.sign_in")} fullWidth />
+                <RaisedButton
+                  type="submit"
+                  primary
+                  disabled={submitting}
+                  label={translate("aor.auth.sendPasswordResetLink")}
+                  fullWidth
+                />
                 <p style={styles.or}>or</p>
                 <RaisedButton
                   secondary
-                  onClick={() => this.props.history.push("/register")}
-                  label={translate("aor.auth.register")}
+                  onClick={() => this.props.history.push("/login")}
+                  label={translate("aor.auth.login")}
                   fullWidth
                 />
-                <p style={styles.or}><a style={styles.forgotPassword} href="/admin#/password-reset-request">Forgot your password?</a></p>
               </CardActions>
             </form>
           </Card>
@@ -128,7 +140,7 @@ class Login extends Component {
   }
 }
 
-Login.propTypes = {
+PasswordResetRequest.propTypes = {
   ...propTypes,
   authClient: PropTypes.func,
   previousRoute: PropTypes.string,
@@ -136,23 +148,22 @@ Login.propTypes = {
   translate: PropTypes.func.isRequired,
 };
 
-Login.defaultProps = {
+PasswordResetRequest.defaultProps = {
   theme: {},
 };
 
 const enhance = compose(
   translate,
   reduxForm({
-    form: "signIn",
+    form: "passwordResetRequest",
     validate: (values, props) => {
       const errors = {};
       const { translate } = props;
-      if (!values.username) errors.username = translate("aor.validation.required");
-      if (!values.password) errors.password = translate("aor.validation.required");
+      if (!values.email) errors.email = translate("aor.validation.required");
       return errors;
     },
   }),
-  connect(null, { userLogin: userLoginAction }),
+  connect(null, { showNotification }),
 );
 
-export default withRouter(enhance(Login));
+export default withRouter(enhance(PasswordResetRequest));

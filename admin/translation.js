@@ -55,18 +55,24 @@ export default  {
         email: "Email",
         username: "Username",
         password: "Password",
+        passwordConfirm: "Password confirm",
         register: "Register",
         sign_in: "Sign in",
         login: "Log in",
         sign_in_error: "Authentication failed, please retry",
-        logout: "Logout"
+        logout: "Logout",
+        sendPasswordResetLink: "Send password reset email",
+        resetPassword: "Reset password"
       },
       notification: {
         updated: "Element updated",
         created: "Element created",
         deleted: "Element deleted",
         item_doesnt_exist: "Element does not exist",
-        http_error: "Server communication error"
+        http_error: "Server communication error",
+        passwordEmailConfirmation: "You will shortly receive an email with password reset confirmation link!",
+        passwordReset: "Password successfully changed! You can login with new password!",
+        passwordMismatch: "Password mismatch! Please try again."
       },
       validation: {
         required: "Required"

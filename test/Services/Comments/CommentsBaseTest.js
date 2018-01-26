@@ -12,14 +12,14 @@ class CommentsBaseTest extends BaseTest {
       .set("Authorization", authorization)
       .send({
         ownerId:  mongoose.Types.ObjectId().toString(),
-        content: this.getRandomizer().randomHex(10),
+        content: this.getRandomizer().randomString(1000),
       });
 
     return {
       response,
       headers: response.headers,
       comment: response.body.model,
-    }
+    };
   }
 
   validateModelResponseFields(responseModel) {

@@ -46,10 +46,15 @@ class Dashboard extends Component {
           {Object.keys(totals).map((key, index) => {
             const card = (
               <Card style={styles.card}>
-                <CardTitle title={totals[key]} subtitle={key.toDash().replace("-", " ").toUpperCase()} />
-
+                <CardTitle
+                  title={totals[key]}
+                  subtitle={key.toDash().replace("-", " ").toUpperCase()}
+                />
                 <CardActions style={styles.cardActions}>
-                  <FlatButton label="View" href={`/admin#/${key.toDash()}`} />
+                  <FlatButton
+                    label="View"
+                    href={`/admin#/${key.toDash()}`}
+                  />
                 </CardActions>
 
               </Card>

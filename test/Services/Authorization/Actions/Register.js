@@ -1,6 +1,5 @@
 import test from 'tape-promise/tape'
 import BaseTest from "../../../BaseTest";
-import mongoose from "mongoose";
 
 class Register extends BaseTest {
   async run() {
@@ -18,8 +17,8 @@ class Register extends BaseTest {
 
     test("POST /register - invalid password, missing one number and one special character - FAIL #1", async test => {
       const { response } = await this.registerTestUser(
-        this.getRandomizer().randomHex(1),
-        this.getRandomizer().randomHex(1),
+        this.getRandomizer().randomString(1),
+        this.getRandomizer().randomString(1),
         this.getRandomEmail(),
         "admin",
         "password"
@@ -37,8 +36,8 @@ class Register extends BaseTest {
 
     test("POST /register - invalid password missing at least one special character - FAIL #2", async test => {
       const { response } = await this.registerTestUser(
-        this.getRandomizer().randomHex(1),
-        this.getRandomizer().randomHex(1),
+        this.getRandomizer().randomString(1),
+        this.getRandomizer().randomString(1),
         this.getRandomEmail(),
         "admin",
         "password0"
@@ -56,8 +55,8 @@ class Register extends BaseTest {
 
     test("POST /register - invalid password missing at least one number - FAIL #2", async test => {
       const { response } = await this.registerTestUser(
-        this.getRandomizer().randomHex(1),
-        this.getRandomizer().randomHex(1),
+        this.getRandomizer().randomString(1),
+        this.getRandomizer().randomString(1),
         this.getRandomEmail(),
         "admin",
         "password!"
@@ -75,8 +74,8 @@ class Register extends BaseTest {
 
     test("POST /register - invalid password not at least 8 characters long - FAIL #3", async test => {
       const { response } = await this.registerTestUser(
-        this.getRandomizer().randomHex(1),
-        this.getRandomizer().randomHex(1),
+        this.getRandomizer().randomString(1),
+        this.getRandomizer().randomString(1),
         this.getRandomEmail(),
         "admin",
         "pass0!#"
@@ -94,8 +93,8 @@ class Register extends BaseTest {
 
     test("POST /register - malformed email format - FAIL", async test => {
       const { response } = await this.registerTestUser(
-        this.getRandomizer().randomHex(1),
-        this.getRandomizer().randomHex(1),
+        this.getRandomizer().randomString(1),
+        this.getRandomizer().randomString(1),
         "testWrongEmail",
         "admin",
         "pass0!#"

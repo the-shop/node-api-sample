@@ -1,8 +1,9 @@
 export class HttpError extends Error {
-  constructor(message, status) {
+  constructor(message, status, body = null) {
     super(message);
     this.message = message;
     this.status = status;
+    this.body = body;
     this.name = this.constructor.name;
     if (typeof Error.captureStackTrace === "function") {
       Error.captureStackTrace(this, this.constructor);
@@ -31,7 +32,7 @@ export const fetchJson = (url, options = {}) => {
       headers: response.headers,
       body: text
     })))
-    .then(({ status, headers, body }) => {
+    .then(({ status, statusText, headers, body }) => {
       let json;
       try {
         json = JSON.parse(body);
@@ -40,7 +41,13 @@ export const fetchJson = (url, options = {}) => {
       }
 
       if (status < 200 || status >= 300) {
-        return Promise.reject(json);
+        return Promise.reject(
+          new HttpError(
+            (json && json.errors && json.errors[0]) || statusText,
+            status,
+            json
+          )
+        );
       }
 
       return { status, headers, body, json };

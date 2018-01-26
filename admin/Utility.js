@@ -89,8 +89,8 @@ const httpClient = (url, options) => {
           json: modelData
         };
       }
-    }).catch((json) => {
-      return Promise.reject(json && json.errors.join("\n" || "Server error"));
+    }).catch((error) => {
+      return Promise.reject(error);
     });
 };
 

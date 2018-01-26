@@ -3,7 +3,6 @@ import test from 'tape-promise/tape'
 import BaseTest from "../../../BaseTest";
 import UsersCollection from "../../../../src/Services/Users/Collections/Users";
 import config from "../../../../src/config";
-import mongoose from "mongoose";
 
 class PasswordResetUpdate extends BaseTest {
   async run() {
@@ -86,13 +85,10 @@ class PasswordResetUpdate extends BaseTest {
 
     test("POST /password-reset - FAIL - token expired", async test => {
       const user = UsersCollection.create({
-        firstName: this.getRandomizer().randomHex(1),
-        lastName: this.getRandomizer().randomHex(1),
+        firstName: this.getRandomizer().randomString(1),
+        lastName: this.getRandomizer().randomString(1),
         email: this.getRandomEmail(),
         role: "admin",
-        timeCreated: new Date(),
-        timeEdited: new Date(),
-        owner:  mongoose.Types.ObjectId().toString(),
         password: "aaaaaa0!"
       });
       await user.save();
@@ -119,13 +115,10 @@ class PasswordResetUpdate extends BaseTest {
 
     test("POST /password-reset - Success", async test => {
       const user = UsersCollection.create({
-        firstName: this.getRandomizer().randomHex(1),
-        lastName: this.getRandomizer().randomHex(1),
+        firstName: this.getRandomizer().randomString(1),
+        lastName: this.getRandomizer().randomString(1),
         email: this.getRandomEmail(),
         role: "admin",
-        timeCreated: new Date(),
-        timeEdited: new Date(),
-        owner:  mongoose.Types.ObjectId().toString(),
         password: "aaaaaa0!"
       });
       await user.save();

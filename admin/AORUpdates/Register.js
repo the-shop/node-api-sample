@@ -94,7 +94,7 @@ class Register extends Component {
       .catch((e) => {
         console.error(e); // eslint-disable-line
       });
-  }
+  };
 
   render() {
     const { handleSubmit, submitting, theme, translate } = this.props;

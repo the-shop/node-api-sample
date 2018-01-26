@@ -18,22 +18,22 @@ class Statistics extends BaseTest {
       const postsCount = await PostsCollection.count();
       const commentsCount = await CommentsCollection.count();
       const user = UsersCollection.create({
-        firstName: this.getRandomizer().randomHex(1),
-        lastName: this.getRandomizer().randomHex(1),
+        firstName: this.getRandomizer().randomString(1),
+        lastName: this.getRandomizer().randomString(1),
         email: this.getRandomEmail(),
         role:  "admin",
       });
       await user.save();
 
       const post = PostsCollection.create({
-        title: this.getRandomizer().randomHex(1),
-        content: this.getRandomizer().randomHex(10),
+        title: this.getRandomizer().randomString(1),
+        content: this.getRandomizer().randomString(1000),
       });
       await post.save();
 
       const comment = CommentsCollection.create({
         ownerId:  mongoose.Types.ObjectId().toString(),
-        content: this.getRandomizer().randomHex(10),
+        content: this.getRandomizer().randomString(1000),
       });
       await comment.save();
 

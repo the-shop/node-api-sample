@@ -4,7 +4,7 @@ import { withRouter } from "react-router";
 import { propTypes, reduxForm, Field } from "redux-form";
 import { connect } from "react-redux";
 import compose from "recompose/compose";
-
+import queryString from "query-string";
 import MuiThemeProvider from "material-ui/styles/MuiThemeProvider";
 import getMuiTheme from "material-ui/styles/getMuiTheme";
 import { Card, CardActions } from "material-ui/Card";
@@ -14,7 +14,7 @@ import TextField from "material-ui/TextField";
 import LockIcon from "material-ui/svg-icons/action/lock-outline";
 import { cyan500, pinkA200 } from "material-ui/styles/colors";
 
-import { Notification, translate, userLogin as userLoginAction } from "admin-on-rest";
+import { Notification, translate, showNotification } from "admin-on-rest";
 
 const styles = {
   main: {
@@ -41,14 +41,6 @@ const styles = {
     width: "100%",
     textAlign: "center",
     display: "block"
-  },
-  forgotPassword: {
-    width: "100%",
-    textAlign: "center",
-    display: "block",
-    color: "black",
-    textDecoration: "none",
-    fontSize: "14px"
   }
 };
 
@@ -72,11 +64,44 @@ const renderInput = ({ meta: { touched, error } = {}, input: { ...inputProps }, 
     fullWidth
   />;
 
-class Login extends Component {
+class PasswordReset extends Component {
 
-  login = ({ username, password }) => {
-    const { userLogin, location } = this.props;
-    userLogin({ username, password }, location.state ? location.state.nextPathname : "/");
+  passwordReset = ({ email, password, passwordConfirm  }) => {
+    const { showNotification } = this.props;
+    const queryParams = queryString.parse(this.props.location.search);
+    const token = queryParams.token || null;
+
+    if (password !== passwordConfirm) {
+      showNotification("aor.notification.passwordMismatch", "warning");
+      return false;
+    }
+
+    const headers = new Headers();
+    headers.set("Content-Type", "application/json");
+
+    fetch("/api/v1/password-reset",
+      {
+        method: "POST",
+        headers,
+        body: JSON.stringify({
+          token,
+          email,
+          password,
+          passwordConfirm
+        })
+      }
+    ).then((response) => response.json())
+      .then((response) => {
+        if (!response.error) {
+          showNotification("aor.notification.passwordReset");
+          this.props.history.push("/login");
+        } else {
+          showNotification(response.errors.join(","), "warning");
+        }
+      })
+      .catch((e) => {
+        console.error(e); // eslint-disable-line
+      });
   };
 
   render() {
@@ -90,34 +115,40 @@ class Login extends Component {
             <div style={styles.avatar}>
               <Avatar backgroundColor={accent1Color} icon={<LockIcon />} size={60} />
             </div>
-            <form onSubmit={handleSubmit(this.login)}>
+            <form onSubmit={handleSubmit(this.passwordReset)}>
               <div style={styles.form}>
                 <div style={styles.input} >
                   <Field
-                    name="username"
+                    name="email"
                     component={renderInput}
                     floatingLabelText={translate("aor.auth.email")}
                   />
                 </div>
-                <div style={styles.input}>
+                <div style={styles.input} >
                   <Field
+                    type="password"
                     name="password"
                     component={renderInput}
                     floatingLabelText={translate("aor.auth.password")}
+                  />
+                </div>
+                <div style={styles.input} >
+                  <Field
                     type="password"
+                    name="passwordConfirm"
+                    component={renderInput}
+                    floatingLabelText={translate("aor.auth.passwordConfirm")}
                   />
                 </div>
               </div>
               <CardActions>
-                <RaisedButton type="submit" primary disabled={submitting} label={translate("aor.auth.sign_in")} fullWidth />
-                <p style={styles.or}>or</p>
                 <RaisedButton
-                  secondary
-                  onClick={() => this.props.history.push("/register")}
-                  label={translate("aor.auth.register")}
+                  type="submit"
+                  primary
+                  disabled={submitting}
+                  label={translate("aor.auth.resetPassword")}
                   fullWidth
                 />
-                <p style={styles.or}><a style={styles.forgotPassword} href="/admin#/password-reset-request">Forgot your password?</a></p>
               </CardActions>
             </form>
           </Card>
@@ -128,7 +159,7 @@ class Login extends Component {
   }
 }
 
-Login.propTypes = {
+PasswordReset.propTypes = {
   ...propTypes,
   authClient: PropTypes.func,
   previousRoute: PropTypes.string,
@@ -136,23 +167,24 @@ Login.propTypes = {
   translate: PropTypes.func.isRequired,
 };
 
-Login.defaultProps = {
+PasswordReset.defaultProps = {
   theme: {},
 };
 
 const enhance = compose(
   translate,
   reduxForm({
-    form: "signIn",
+    form: "passwordReset",
     validate: (values, props) => {
       const errors = {};
       const { translate } = props;
-      if (!values.username) errors.username = translate("aor.validation.required");
+      if (!values.email) errors.email = translate("aor.validation.required");
       if (!values.password) errors.password = translate("aor.validation.required");
+      if (!values.passwordConfirm) errors.passwordConfirm = translate("aor.validation.required");
       return errors;
     },
   }),
-  connect(null, { userLogin: userLoginAction }),
+  connect(null, { showNotification }),
 );
 
-export default withRouter(enhance(Login));
+export default withRouter(enhance(PasswordReset));

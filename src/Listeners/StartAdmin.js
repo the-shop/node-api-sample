@@ -22,7 +22,7 @@ class StartAdmin extends AbstractListener {
   handle () {
     try {
       this.getApplication()
-        .log("Starting Swagger");
+        .log("Starting Admin");
 
       const file = fs.readFileSync(path.join(__dirname, "../../admin/index.html"));
 

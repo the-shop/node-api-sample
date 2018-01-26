@@ -2,7 +2,6 @@ import request from "supertest";
 import test from 'tape-promise/tape'
 import BaseTest from "../../../BaseTest";
 import UsersCollection from "../../../../src/Services/Users/Collections/Users";
-import mongoose from "mongoose";
 
 class PasswordChange extends BaseTest {
   async run() {
@@ -76,13 +75,10 @@ class PasswordChange extends BaseTest {
     test("POST /password-change - Success", async test => {
       const email = this.getRandomEmail();
       const user = UsersCollection.create({
-        firstName: this.getRandomizer().randomHex(1),
-        lastName: this.getRandomizer().randomHex(1),
+        firstName: this.getRandomizer().randomString(1),
+        lastName: this.getRandomizer().randomString(1),
         email: email,
         role: "admin",
-        timeCreated: new Date(),
-        timeEdited: new Date(),
-        owner:  mongoose.Types.ObjectId().toString(),
         password: "aaaaaa0!"
       });
 

@@ -74,7 +74,6 @@ information.
 
  - `test/` directory contains test files
  - `tools/` is used for various tasks (such is app startup)
- - `uploads/` directory contains file uploads - will be replaced with S3
 
 ## Data
 

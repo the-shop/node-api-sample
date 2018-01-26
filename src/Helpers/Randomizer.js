@@ -38,7 +38,23 @@ class Randomizer {
 
     return parseInt(intWithLength, 10);
   }
-}
 
+  /**
+   * Generates random string based on string length
+   *
+   * @param length
+   * @param charSet
+   * @returns {*}
+   */
+  randomString (length = 32, charSet) {
+    charSet = charSet || "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+    let randomString = "";
+    for (let i = 0; i < length; i++) {
+      const randomPosition = Math.floor(Math.random() * charSet.length);
+      randomString += charSet.substring(randomPosition, randomPosition + 1);
+    }
+    return randomString;
+  }
+}
 
 export default Randomizer;

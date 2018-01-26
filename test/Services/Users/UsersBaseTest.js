@@ -2,7 +2,6 @@ import request from "supertest";
 import test from "tape-promise/tape";
 import BaseTest from "../../BaseTest";
 import moment from "moment";
-import mongoose from "mongoose";
 
 class UsersBaseTest extends BaseTest {
   async createTestUser(headers) {
@@ -11,8 +10,8 @@ class UsersBaseTest extends BaseTest {
       .post("/api/v1/users")
       .set("Authorization", authorization)
       .send({
-        firstName: this.getRandomizer().randomHex(1),
-        lastName: this.getRandomizer().randomHex(1),
+        firstName: this.getRandomizer().randomString(1),
+        lastName: this.getRandomizer().randomString(1),
         email: this.getRandomEmail(),
         role:  "admin",
       });
@@ -21,7 +20,7 @@ class UsersBaseTest extends BaseTest {
       response,
       headers: response.headers,
       user: response.body.model,
-    }
+    };
   }
 
   validateModelResponseFields(responseModel) {

@@ -4,7 +4,6 @@ import BaseTest from "../../../BaseTest";
 import PasswordResetRequestAction from "../../../../src/Services/Authorization/Actions/PasswordResetRequest";
 import Application from "../../../../src/Application";
 import UsersCollection from "../../../../src/Services/Users/Collections/Users";
-import mongoose from "mongoose";
 
 class PasswordResetRequest extends BaseTest {
   async run() {
@@ -80,13 +79,10 @@ class PasswordResetRequest extends BaseTest {
 
     test("POST /password-reset-request - test if post hook is triggered - SUCCESS", async test => {
       const user = UsersCollection.create({
-        firstName: this.getRandomizer().randomHex(1),
-        lastName: this.getRandomizer().randomHex(1),
+        firstName: this.getRandomizer().randomString(1),
+        lastName: this.getRandomizer().randomString(1),
         email: this.getRandomEmail(),
         role: "admin",
-        timeCreated: new Date(),
-        timeEdited: new Date(),
-        owner:  mongoose.Types.ObjectId().toString(),
         password: "aaaaaa0!"
       });
       await user.save();
