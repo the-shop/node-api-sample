@@ -75,8 +75,9 @@ class EventsRegistry {
 
     if (this.registeredListeners[eventName]) {
       let syncPromises = [];
+      let asyncPromises = [];
       try {
-        responses = this.registeredListeners[eventName].map(async listener => {
+        this.registeredListeners[eventName].map(async listener => {
           if (listener instanceof AbstractListener === false) {
             this.getApplication().logError("Listener must be instance of AbstractListener");
             return false;
@@ -91,15 +92,15 @@ class EventsRegistry {
           });
 
           if (listener.isAsync() === true) {
-            return listener.handle(payload);
+            asyncPromises.push(listener.handle(payload));
+          } else {
+            syncPromises.push(listener.handle(payload));
           }
 
-          const syncListener = listener.handle(payload);
-          syncPromises.push(syncListener);
-          return syncListener;
         });
 
-        await Promise.all(syncPromises);
+        syncPromises = await Promise.all(syncPromises);
+        responses = syncPromises.concat(asyncPromises);
 
       } catch (listenerError) {
         throw listenerError;
@@ -179,11 +180,6 @@ class EventsRegistry {
         const registeredEventNames = Object.keys(registeredListeners);
 
         this.writeDocumentationLine("");
-        this.writeDocumentationLine("## All events");
-        this.writeDocumentationLine("");
-        allEventNames.map(eventName => this.writeDocumentationLine(` - ${eventName}`));
-
-        this.writeDocumentationLine("");
         this.writeDocumentationLine("## Registered listeners");
         this.writeDocumentationLine("");
         registeredEventNames.map(eventName => {
@@ -192,6 +188,11 @@ class EventsRegistry {
             listener => this.writeDocumentationLine(`   - ${listener.constructor.name}`)
           );
         });
+
+        this.writeDocumentationLine("");
+        this.writeDocumentationLine("## All events");
+        this.writeDocumentationLine("");
+        allEventNames.map(eventName => this.writeDocumentationLine(` - ${eventName}`));
       } catch (error) {
         this.getApplication().logError(error.stack || error);
       }

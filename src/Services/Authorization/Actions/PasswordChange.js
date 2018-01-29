@@ -2,6 +2,7 @@ import AbstractAction from "../../../Framework/AbstractAction";
 import InputMalformedError from "../../../Framework/Errors/InputMalformedError";
 import UsersCollection from "../../Users/Collections/Users";
 import config from "../../../config";
+
 /**
  * Changes password for current user
  *

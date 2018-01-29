@@ -12,6 +12,12 @@ class ApiResponseOutput extends AbstractListener {
   ];
 
   /**
+   * Triggers before ApiResponseOutput returns express response
+   * @type {string}
+   */
+  static EVENT_API_RESPONSE_OUTPUT_PRE = "EVENT_API_RESPONSE_OUTPUT_PRE";
+
+  /**
    * Listener entry point
    */
   async handle({ error, response, expressRes, expressReq }) {
@@ -20,7 +26,7 @@ class ApiResponseOutput extends AbstractListener {
       return null;
     }
 
-    const out = {
+    let out = {
       error: false
     };
 
@@ -39,7 +45,7 @@ class ApiResponseOutput extends AbstractListener {
       // Number of models in response
       const modelsCount = response.length;
       // Number of pages for given "query", "start" and "end" request values
-      const pagesCount = modelsCount === 0 ?  0 : Math.ceil(totalCount / modelsCount);
+      const pagesCount = modelsCount === 0 ? 0 : Math.ceil(totalCount / modelsCount);
       out.pagination = {
         pagesCount,
         modelsCount,
@@ -53,12 +59,26 @@ class ApiResponseOutput extends AbstractListener {
       out.model = await this.formatSingleModel(response, expressReq.url);
     }
 
+    const eventResponses = await this.getApplication()
+      .getEventsRegistry()
+      .trigger(
+        ApiResponseOutput.EVENT_API_RESPONSE_OUTPUT_PRE, Object.assign({}, out)
+      );
+
+    /**
+     * We have got array of responses from events registry (all triggered listeners on one event)
+     * so we'll just account for the first one to return modified output
+     */
+    if (eventResponses.length > 0 ) {
+      out = eventResponses[0];
+    }
+
     expressRes.status(200).json(out);
 
     return out;
   }
 
-  async formatSingleModel (model, url) {
+  async formatSingleModel(model, url) {
     let result = model;
 
     if (model.constructor && model.constructor.modelName) {

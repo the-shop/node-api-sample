@@ -103,7 +103,7 @@ class Router {
                 200
               );
 
-              this.getApplication()
+              await this.getApplication()
                 .getEventsRegistry()
                 .trigger(
                   Router.EVENT_ROUTER_ROUTE_HANDLE_POST, {

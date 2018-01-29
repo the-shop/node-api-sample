@@ -1,7 +1,8 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
+import { withRouter } from "react-router-dom";
 import withWidth from "material-ui/utils/withWidth";
-import { AppBarMobile } from "admin-on-rest";
+import { AppBarMobile, Restricted } from "admin-on-rest";
 import { Card, CardTitle, CardActions } from "material-ui/Card";
 import FlatButton from "material-ui/FlatButton";
 import { fetchJson } from "../jsonServer";
@@ -21,9 +22,7 @@ class Dashboard extends Component {
   constructor(props, context) {
     super(props, context);
     this.state = {
-      stats: {
-        totals: {}
-      },
+      totals: {}
     };
   }
 
@@ -31,18 +30,20 @@ class Dashboard extends Component {
     const token = cookies.get("Authorization", { path: "/" });
     fetchJson("api/v1/statistics/counts", { user : { token, authenticated: true } })
       .then(response => response.json)
-      .then(response => this.setState({ stats: response.model }));
+      .then(response => this.setState({ totals: response.model.totals }));
   }
 
   render() {
-    const { totals } = this.state.stats;
+    const { totals } = this.state;
     const { width } = this.props;
 
     return (
-      <div>
-        {width === 1 && <AppBarMobile title="Admin Dashboard" />}
+      <Restricted location={location}>
 
         <div style={width === 1 ? styles.fullWidthFlex : styles.flex}>
+
+          {width === 1 && <AppBarMobile title="Admin Dashboard" />}
+
           {Object.keys(totals).map((key, index) => {
             const card = (
               <Card style={styles.card}>
@@ -76,7 +77,7 @@ class Dashboard extends Component {
 
         </div>
 
-      </div>
+      </Restricted>
     );
   }
 }
@@ -85,4 +86,9 @@ Dashboard.propTypes = {
   width:PropTypes.number.isRequired,
 };
 
-export default withWidth()(Dashboard);
+Dashboard.propTypes = {
+  width: PropTypes.number.isRequired,
+  location: PropTypes.object.isRequired,
+};
+
+export default withWidth()(withRouter(Dashboard));

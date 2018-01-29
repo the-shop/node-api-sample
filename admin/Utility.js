@@ -48,9 +48,20 @@ const authClient = (type, params) => {
   }
 
   if (type === AUTH_CHECK) {
-    return cookies.get("Authorization") ? Promise.resolve() : Promise.reject();
-  }
+    const authCookie = cookies.get("Authorization");
+    if (!authCookie) {
+      return Promise.reject();
+    }
 
+    return fetchJson("/api/v1/profile", { user: { authenticated: true, token: authCookie } })
+      .then((response) => {
+        if (response.status !== 200) {
+          return Promise.reject(response.body);
+        }
+
+        return response.headers.get("Authorization");
+      });
+  }
   if (type === AUTH_LOGOUT) {
     cookies.remove("Authorization");
     return Promise.resolve();

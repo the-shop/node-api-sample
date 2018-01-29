@@ -3,6 +3,23 @@
 This file contains of 2 lists - one of all registered events and the other that also maps to
 registered listeners.
 
+## Registered listeners
+
+ - EVENT_ROUTER_ROUTE_HANDLE_POST
+   - ApiResponseOutput
+ - EVENT_APPLICATION_RUN
+   - ApplicationRun
+ - EVENT_EXPRESS_START_POST
+   - BootTime
+ - EVENT_APPLICATION_RUN_PRE
+   - RegisterMiddleware
+   - StartAdmin
+   - StartSwagger
+ - EVENT_ROUTER_ROUTE_HANDLE_PRE
+   - RenewJwt
+ - EVENT_ACTION_PASSWORD_RESET_REQUEST_POST
+   - SendPasswordResetLink
+
 ## All events
 
  - EVENT_ACTION_COMMENT_CREATE_MODEL_CREATED
@@ -61,6 +78,7 @@ registered listeners.
  - EVENT_ACTION_USER_UPDATE_MODEL_NOT_FOUND
  - EVENT_ACTION_USER_UPDATE_MODEL_POST
  - EVENT_ACTION_USER_UPDATE_MODEL_PRE
+ - EVENT_API_RESPONSE_OUTPUT_PRE
  - EVENT_APPLICATION_BOOTSTRAP_POST
  - EVENT_APPLICATION_RUN
  - EVENT_APPLICATION_RUN_POST
@@ -69,21 +87,4 @@ registered listeners.
  - EVENT_EXPRESS_START_PRE
  - EVENT_ROUTER_ROUTE_HANDLE_POST
  - EVENT_ROUTER_ROUTE_HANDLE_PRE
-
-## Registered listeners
-
- - EVENT_ROUTER_ROUTE_HANDLE_POST
-   - ApiResponseOutput
- - EVENT_APPLICATION_RUN
-   - ApplicationRun
- - EVENT_EXPRESS_START_POST
-   - BootTime
- - EVENT_APPLICATION_RUN_PRE
-   - RegisterMiddleware
-   - StartAdmin
-   - StartSwagger
- - EVENT_ROUTER_ROUTE_HANDLE_PRE
-   - RenewJwt
- - EVENT_ACTION_PASSWORD_RESET_REQUEST_POST
-   - SendPasswordResetLink
 
