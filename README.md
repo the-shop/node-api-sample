@@ -112,4 +112,10 @@ Seeders are found in `src/Database/seed/` directory.
 
 ## Development
 
-TODO: explain how docs are generated, how to follow structure...
+### How are docs generated
+
+COMING SOON
+
+### Extending functionality
+
+COMING SOON

@@ -1,8 +1,7 @@
 /**
- * This is entry for API so that NewRelic startup goes correctly
+ * This is entry for API 
  */
 require("dotenv").config();
-require("newrelic");
 const express = require("express");
 const Application = require("../src/Application").default;
 
