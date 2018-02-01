@@ -1,6 +1,5 @@
 import jwt from "jsonwebtoken";
 import AbstractListener from "../../../Framework/AbstractListener";
-import config from "../../../config";
 
 class SendPasswordResetLink extends AbstractListener {
   static LISTEN_ON = [
@@ -8,6 +7,7 @@ class SendPasswordResetLink extends AbstractListener {
   ];
 
   async handle(user) {
+    const config = this.getApplication().getConfiguration();
     const resetToken = user.passResetToken;
 
     const token = jwt.sign({ email: user.email }, config.jwt.secret);

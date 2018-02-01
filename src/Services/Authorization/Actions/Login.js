@@ -4,7 +4,6 @@ import NotFoundError from "../../../Framework/Errors/NotFoundError";
 import UnauthorizedError from "../../../Framework/Errors/UnauthorizedError";
 import InputMalformedError from "../../../Framework/Errors/InputMalformedError";
 import UsersCollection from "../../Users/Collections/Users";
-import config from "../../../config";
 
 /**
  * Logs in user based on request body input `email` and `password` parameters.
@@ -78,6 +77,7 @@ class LoginAction extends AbstractAction {
    * Actual handler for the API endpoint
    */
   async handle ({email, password}, req, res) {
+    const config = this.getApplication().getConfiguration();
     const user = await UsersCollection.loadOne({ email: email.toLowerCase() });
 
     if (!user) {

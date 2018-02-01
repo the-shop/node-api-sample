@@ -1,7 +1,6 @@
 import AbstractAction from "../../../Framework/AbstractAction";
 import InputMalformedError from "../../../Framework/Errors/InputMalformedError";
 import UsersCollection from "../../Users/Collections/Users";
-import config from "../../../config";
 
 /**
  * Changes password for current user
@@ -61,6 +60,7 @@ class PasswordChangeAction extends AbstractAction {
    */
   async getActionInput (request) {
     // Check if config value allows change without current password
+    const config = this.getApplication().getConfiguration();
     const requireCurrentPassword = !!["true", true].find(one => config.password.requireCurrentOnChange === one);
 
     if (requireCurrentPassword  && !request.body.currentPassword) {

@@ -3,7 +3,6 @@ import UsersCollection from "../../Users/Collections/Users";
 import AbstractAction from "../../../Framework/AbstractAction";
 import InputMalformedError from "../../../Framework/Errors/InputMalformedError";
 import CreateUserAction from "../../Users/Actions/Create";
-import config from "../../../config";
 import Email from "../../../../src/Helpers/Email";
 
 /**
@@ -97,6 +96,7 @@ class RegisterAction extends AbstractAction {
    * Actual handler for the API endpoint
    */
   async handle (params, req, res) {
+    const config = this.getApplication().getConfiguration();
     const existingUser = await UsersCollection.loadOne({ email: params.email });
 
     if (existingUser) {

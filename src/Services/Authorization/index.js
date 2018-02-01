@@ -1,5 +1,7 @@
+import passportJWT from "passport-jwt";
 import AbstractService  from "../AbstractService";
 import Strategies from "./Strategies";
+import config from "../../config";
 
 class Authorization extends AbstractService {
   bootstrap () {
@@ -29,6 +31,19 @@ class Authorization extends AbstractService {
     }
 
     return null;
+  }
+
+  /**
+   * Returns JWT params object
+   *
+   * @returns {{secretOrKey: *, jwtFromRequest: *}}
+   */
+  static getJwtParams() {
+    return {
+      secretOrKey: config.jwt.secret,
+      jwtFromRequest: passportJWT.ExtractJwt
+        .fromExtractors([ Authorization.getAuthorizationHeader ])
+    };
   }
 }
 

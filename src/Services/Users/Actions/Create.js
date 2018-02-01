@@ -17,22 +17,22 @@ import UsersCollection from "../Collections/Users";
  *         description: User's first name 
  *         type: string
  *         in: body
- *         required: true 
+ *         required: true
  *       - name: lastName
  *         description: User's last name 
  *         type: string
  *         in: body
- *         required: true 
+ *         required: true
  *       - name: email
  *         description: User's description 
  *         type: string
  *         in: body
- *         required: true 
+ *         required: true
  *       - name: role
  *         description: User's role 
  *         type: string
  *         in: body
- *         required: true 
+ *         required: true
  *     description: Create new User model and returns it
  *     summary: Create new User model
  *     responses:
@@ -111,11 +111,11 @@ class CreateAction extends AbstractAction {
    * Actual handler for the API endpoint
    */
   async handle({ 
-    firstName, 
-    lastName, 
-    email, 
-    role, 
-    owner, 
+    firstName,
+    lastName,
+    email,
+    role,
+    owner,
   }) {
     await this.trigger("EVENT_ACTION_USER_CREATE_MODEL_PRE");
 

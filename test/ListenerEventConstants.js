@@ -1,5 +1,2 @@
-export const MailChimp = [
-  "EVENT_ACTION_USER_CREATE_MODEL_POST",
-  "EVENT_ACTION_USER_DELETE_MODEL_POST",
-  "EVENT_ACTION_USER_UPDATE_MODEL_POST"
-];
+export const listenerEventConstants = {
+};

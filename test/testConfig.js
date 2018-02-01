@@ -1,10 +1,6 @@
-import dotenv from "dotenv";
-
-dotenv.config();
-
 const config = {
-  env: process.env.NODE_ENV || "development",
-  db: process.env.MONGODB_URI || "mongodb://localhost/node-api-sample-api",
+  env: "testing",
+  db: process.env.MONGODB_URI || "mongodb://localhost/engage-api",
   debug: process.env.DEBUG === "true" || process.env.DEBUG === true,
   rootDir: `${__dirname}/..`,
   facebook: {
@@ -16,25 +12,20 @@ const config = {
   },
   password: {
     resetTokenTimeoutSeconds: process.env.PASSWORD_RESET_TOKEN_TIMEOUT_SECONDS || 86400,
-    requireCurrentOnChange: process.env.PASSWORD_REQUIRE_CURRENT_ON_CHANGE || true,
   },
   jwt: {
     secret: process.env.JWT_SECRET || "shhhhh",
   },
   api: {
-    host: process.env.API_HOST || "http://localhost:3030",
-    port: process.env.PORT || 3030
+    host: process.env.API_HOST || "http://localhost:3000",
+    port: process.env.PORT || 3000
   },
   frontend: {
     host: process.env.FRONTEND_HOST || "http://localhost:3000",
     passwordResetUri: process.env.FRONTEND_PASSWORD_RESET_URI || "/reset-password",
   },
-  admin: {
-    host: process.env.ADMIN_HOST || "http://localhost:3000",
-    passwordResetUri: process.env.ADMIN_PASSWORD_RESET_URI || "/reset-password",
-  },
   swagger: {
-    host: process.env.SWAGGER_HOST || "http://localhost:3030"
+    host: process.env.SWAGGER_HOST || "http://localhost:3000"
   },
   contact: {
     name: process.env.GENERAL_CONTACT_NAME || "Company",
@@ -62,7 +53,7 @@ const config = {
       fromEmail: process.env.MAILCHIMP_CAMPAIGN_FROM_EMAIL
       ||  process.env.GENERAL_EMAIL_CONTACT_ADDRESS
       || "contact@company.com",
-      subject: process.env.MAILCHIMP_CAMPAIGN_SUBJECT || "Campaign subject",
+      subject: process.env.MAILCHIMP_CAMPAIGN_SUBJECT,
       language: process.env.MAILCHIMP_CAMPAIGN_LANGUAGE || "en-US",
     }
   },
@@ -83,11 +74,8 @@ const config = {
     uploadsDirectory: "uploads/"
   },
   listenerPaths: {
-    staticPath: "/src/Listeners",
-    servicesPath: "/src/Services"
-  },
-  application: {
-    ownerId: process.env.OWNER_ID || "aaaaaaaaaaaaaaaaaaaaaaaa"
+    staticPath: "/test/DummyListeners",
+    servicesPath: "/test/DummyServicesListeners"
   }
 };
 

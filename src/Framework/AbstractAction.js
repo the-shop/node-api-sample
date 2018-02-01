@@ -8,7 +8,7 @@ class AbstractAction {
   static IS_PUBLIC = false;
 
   /**
-   * Ensure class behaves as abstract class
+   * Ensure class behaves as abstract
    */
   constructor () {
     this.name = this.constructor.name;
@@ -18,16 +18,22 @@ class AbstractAction {
 
     this.applicationInstance = null;
     this.aclInstance = null;
+    this.request = null;
+    this.response = null;
   }
 
   /**
    * Shortcut to triggering events from actions
+   *
+   * @param eventName
+   * @param payload
+   * @returns {Promise<*>}
    */
-  async trigger() {
+  async trigger(eventName, payload = {}) {
     try {
       return await this.getApplication()
         .getEventsRegistry()
-        .trigger(...arguments);
+        .trigger(eventName, payload, this.getRequest(), this.getResponse());
     } catch (error) {
       this.getApplication().logError("Issue with listener.", error.message);
       throw error;
@@ -55,7 +61,7 @@ class AbstractAction {
    * Sets application onto class instance, later used to inject application where needed
    *
    * @param applicationInstance
-   * @returns {this}
+   * @returns {AbstractAction}
    */
   setApplication (applicationInstance) {
     this.applicationInstance = applicationInstance;
@@ -131,6 +137,46 @@ class AbstractAction {
    */
   getAcl() {
     return this.aclInstance;
+  }
+
+  /**
+   * Setter for request object
+   *
+   * @param request
+   * @returns {AbstractAction}
+   */
+  setRequest(request) {
+    this.request = request;
+    return this;
+  }
+
+  /**
+   * Getter for request object
+   *
+   * @returns {*}
+   */
+  getRequest() {
+    return this.request;
+  }
+
+  /**
+   * Setter for response object
+   *
+   * @param response
+   * @returns {AbstractAction}
+   */
+  setResponse(response) {
+    this.response = response;
+    return this;
+  }
+
+  /**
+   * Getter for response object
+   *
+   * @returns {*}
+   */
+  getResponse() {
+    return this.response;
   }
 }
 

@@ -17,12 +17,12 @@ import PostsCollection from "../Collections/Posts";
  *         description: Post title 
  *         type: string
  *         in: body
- *         required: true 
+ *         required: true
  *       - name: content
  *         description: Post content 
  *         type: string
  *         in: body
- *         required: true 
+ *         required: true
  *     description: Create new Post model and returns it
  *     summary: Create new Post model
  *     responses:
@@ -82,9 +82,9 @@ class CreateAction extends AbstractAction {
    * Actual handler for the API endpoint
    */
   async handle({ 
-    title, 
-    content, 
-    owner, 
+    title,
+    content,
+    owner,
   }) {
     await this.trigger("EVENT_ACTION_POST_CREATE_MODEL_PRE");
 

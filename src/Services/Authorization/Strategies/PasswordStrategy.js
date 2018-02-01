@@ -2,7 +2,6 @@ import passport from "passport";
 import passportJWT from "passport-jwt";
 import mongoose from "mongoose";
 import UnauthorizedError from "../../../Framework/Errors/UnauthorizedError";
-import config from "../../../config";
 import Authorization from "../index";
 
 const User = mongoose.model("User");
@@ -16,7 +15,7 @@ class PasswordStrategy {
     this.getApplication().log(" - Password Strategy");
 
     passport.use(new passportJWT.Strategy(
-      PasswordStrategy.getJwtParams(),
+      Authorization.getJwtParams(),
       async (payload, done) => {
         if (payload.expires < Date.now()) {
           return done(null, false, new UnauthorizedError("Token expired"));
@@ -31,14 +30,6 @@ class PasswordStrategy {
         return done(null, user);
       }
     ));
-  }
-
-  static getJwtParams() {
-    return {
-      secretOrKey: config.jwt.secret,
-      jwtFromRequest: passportJWT.ExtractJwt
-        .fromExtractors([ Authorization.getAuthorizationHeader ])
-    };
   }
 
   /**

@@ -1,7 +1,6 @@
 import newrelic from "newrelic";
 import AbstractListener from "../Framework/AbstractListener";
 import Database from "../Database/Database";
-import config from "../config";
 import Application from "../Application";
 
 /**
@@ -85,6 +84,7 @@ class ApplicationRun extends AbstractListener {
     /**
      * Error handling
      */
+    const config = this.getApplication().getConfiguration();
     this.getApplication()
       .getExpress()
       .use((err, req, res, next) => {

@@ -5,9 +5,12 @@ import express from "express";
 import Application from "../src/Application";
 import Database from "../src/Database/Database";
 import AbstractListener from "../src/Framework/AbstractListener";
+import config from "../src/config";
 
 const app = new Application();
-app.setExpress(express());
+app.setExpress(express())
+  .setConfiguration(config)
+  .bootstrap();
 
 process.on("unhandledRejection", (reason, promise) => {
   console.error("Unhandled Rejection at: %O", promise); // eslint-disable-line

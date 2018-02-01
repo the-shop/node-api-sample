@@ -17,12 +17,12 @@ import CommentsCollection from "../Collections/Comments";
  *         description: Comment owner 
  *         type: schema.types.objectid
  *         in: body
- *         required: true 
+ *         required: true
  *       - name: content
  *         description: Post content 
  *         type: string
  *         in: body
- *         required: true 
+ *         required: true
  *     description: Create new Comment model and returns it
  *     summary: Create new Comment model
  *     responses:
@@ -82,9 +82,9 @@ class CreateAction extends AbstractAction {
    * Actual handler for the API endpoint
    */
   async handle({ 
-    ownerId, 
-    content, 
-    owner, 
+    ownerId,
+    content,
+    owner,
   }) {
     await this.trigger("EVENT_ACTION_COMMENT_CREATE_MODEL_PRE");
 

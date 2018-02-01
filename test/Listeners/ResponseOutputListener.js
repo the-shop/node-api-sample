@@ -1,7 +1,7 @@
 import test from "tape-promise/tape";
 import request from "supertest";
 import BaseTest from "../BaseTest";
-import DummyResponseOutputListener from "./DummyResponseOutputListener";
+import DummyResponseOutputListener from "../DummyListeners/DummyResponseOutputListener";
 import ApiResponseOutput from "../../src/Listeners/ApiResponseOutput";
 import UsersCollection from "../../src/Services/Users/Collections/Users";
 

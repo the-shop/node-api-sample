@@ -1,7 +1,7 @@
 import test from "tape-promise/tape";
 import BaseTest from "../BaseTest";
 import Application from "../../src/Application";
-import config from "../../src/config";
+import config from "../testConfig";
 import express from "express";
 
 class DummyHttpClient {
@@ -48,23 +48,27 @@ class ApplicationTest extends BaseTest {
   async run() {
     test("APPLICATION - instantiate - SUCCESS", test => {
       const app = new Application();
-      test.notEqual(undefined, app.getServicesRegistry());
-      test.notEqual(undefined, app.getRouter());
-      test.notEqual(undefined, app.getEventsRegistry());
-      test.notEqual(undefined, app.getAcl());
-      test.notEqual(undefined, app.getAdaptersRegistry());
+
+      test.equal(undefined, app.getServicesRegistry());
+      test.equal(undefined, app.getRouter());
+      test.equal(undefined, app.getEventsRegistry());
+      test.equal(undefined, app.getAcl());
+      test.equal(undefined, app.getAdaptersRegistry());
       test.equal(undefined, app.getDatabase());
       test.notEqual(undefined, app.getAppStartTime());
       test.equal(undefined, app.getExpress());
-      test.notEqual(undefined, app.getExpressPort());
-      test.equal(config.api.port, app.getExpressPort());
-      test.notEqual(undefined, app.getModelsRegistry());
+      test.equal(undefined, app.getExpressPort());
+      test.notEqual(config.api.port, app.getExpressPort());
+      test.equal(undefined, app.getModelsRegistry());
 
       test.end();
     });
 
     test("APPLICATION - externalHttp() - no url - FAIL", async test => {
       const app = new Application();
+      app.setExpress(express())
+        .setConfiguration(config)
+        .bootstrap();
 
       try {
         await app.externalHttpRequest();
@@ -76,12 +80,15 @@ class ApplicationTest extends BaseTest {
     });
 
     test("APPLICATION - externalHttp() - SUCCESS", async test => {
-      const app = new Application({ httpClient: new DummyHttpClient() });
-      app.setExpress(express);
+      const app = new Application();
+      app.setExpress(express())
+        .setConfiguration(config)
+        .bootstrap()
+        .setHttpClient(new DummyHttpClient());
 
       const response = await app.externalHttpRequest(
         "POST",
-        `testing`
+        "testing"
       );
 
       test.equal(response.url, "testing");
@@ -90,12 +97,15 @@ class ApplicationTest extends BaseTest {
     });
 
     test("APPLICATION - externalHttp() with query parameters - SUCCESS", async test => {
-      const app = new Application({ httpClient: new DummyHttpClient() });
-      app.setExpress(express);
+      const app = new Application();
+      app.setExpress(express())
+        .setConfiguration(config)
+        .bootstrap()
+        .setHttpClient(new DummyHttpClient());
 
       const response = await app.externalHttpRequest(
         "GET",
-        `testing`,
+        "testing",
         {
           query: "testQueryData",
           headers: {
@@ -116,12 +126,15 @@ class ApplicationTest extends BaseTest {
     });
 
     test("APPLICATION - externalHttp() with post parameters - SUCCESS", async test => {
-      const app = new Application({ httpClient: new DummyHttpClient() });
-      app.setExpress(express);
+      const app = new Application();
+      app.setExpress(express())
+        .setConfiguration(config)
+        .bootstrap()
+        .setHttpClient(new DummyHttpClient());
 
       const response = await app.externalHttpRequest(
         "POST",
-        `testing`,
+        "testing",
         {
           data: "testPostData",
           headers: {
@@ -137,6 +150,21 @@ class ApplicationTest extends BaseTest {
         });
       test.equal(response.queryData, null);
       test.equal(response.postData, "testPostData");
+
+      test.end();
+    });
+
+    test("APPLICATION - bootstrap - no configuration set - FAIL", test => {
+      const app = new Application();
+
+      test.equal(app.configuration, null);
+
+      try {
+        app.bootstrap();
+      } catch (error) {
+        test.equal(error.code, 500);
+        test.equal(error.message, "Configuration not set in Application.");
+      }
 
       test.end();
     });

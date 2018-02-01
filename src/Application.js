@@ -9,7 +9,6 @@ import AdaptersRegistry from "./AdaptersRegistry";
 import TemplatesRegistry from "./TemplatesRegistry";
 import Acl from "./Framework/Acl/Acl";
 import Authorization from "./Framework/Acl/Authorization";
-import config from "./config";
 
 const log = debug("node-api-sample:server:log:message");
 const logError = debug("node-api-sample:server:log:error");
@@ -56,15 +55,10 @@ class Application {
 
   /**
    * Setup everything needed for the app
-   * @param configuration
    */
-  constructor (configuration = {}) {
+  constructor () {
     this.appStartTimeMs = (new Date()).getTime();
-
-    this.setHttpClient(configuration.httpClient || superagent);
-    this.setExpressPort(configuration.expressPort || config.api.port);
-
-    this.bootstrap();
+    this.configuration = null;
   }
 
   /**
@@ -72,6 +66,11 @@ class Application {
    */
   bootstrap () {
     this.log("Bootstrapping...");
+    // Let's check if configuration is set
+    this.getConfiguration();
+
+    this.setHttpClient(this.configuration.httpClient || superagent);
+    this.setExpressPort(this.configuration.api.port);
 
     // Prepare ACL instances
     const authorization = new Authorization(
@@ -115,6 +114,8 @@ class Application {
 
     this.getEventsRegistry()
       .trigger(Application.EVENT_APPLICATION_BOOTSTRAP_POST, this);
+
+    return this;
   }
 
   /**
@@ -286,6 +287,18 @@ class Application {
     return this.expressPort;
   }
 
+  setConfiguration(config) {
+    this.configuration = config;
+    return this;
+  }
+
+  getConfiguration() {
+    if (this.configuration === null) {
+      throw new FrameworkError("Configuration not set in Application.");
+    }
+    return this.configuration;
+  }
+
   /**
    * Returns UNIX timestamp of time when Application.constructor() was called in milliseconds
    *
@@ -329,6 +342,7 @@ class Application {
    */
   setHttpClient(client) {
     this.httpClient = client;
+    return this;
   }
 
   /**

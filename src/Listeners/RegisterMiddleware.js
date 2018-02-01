@@ -7,7 +7,6 @@ import expressSession from "express-session";
 import express from "express";
 import passport from "passport";
 import UsersCollection from "../Services/Users/Collections/Users";
-import config from "../config";
 import AbstractListener from "../Framework/AbstractListener";
 import Application from "../Application";
 
@@ -30,6 +29,7 @@ class RegisterMiddleware extends AbstractListener {
   handle () {
     try {
       this.getApplication().log("REGISTER: Middleware");
+      const config = this.getApplication().getConfiguration();
 
       const expressApp = this.getApplication().getExpress();
 

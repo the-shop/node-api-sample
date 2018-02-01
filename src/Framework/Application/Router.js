@@ -82,6 +82,8 @@ class Router {
                 }
               }
 
+              actionInstance.setRequest(req);
+              actionInstance.setResponse(res);
               actionInstance.setAcl(this.getApplication().getAcl());
 
               const actionInput = await actionInstance.getActionInput(req);

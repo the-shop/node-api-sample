@@ -13,6 +13,7 @@ Application is event driven and code structure allows easy micro service deploym
 Following services are set up:
 
 
+ - NewRelic
  - Crud
    - Users
    - Posts

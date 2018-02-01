@@ -4,6 +4,7 @@ import BaseTest from "../../../BaseTest";
 import PasswordResetRequestAction from "../../../../src/Services/Authorization/Actions/PasswordResetRequest";
 import Application from "../../../../src/Application";
 import UsersCollection from "../../../../src/Services/Users/Collections/Users";
+import config from "../../../../src/config";
 
 class PasswordResetRequest extends BaseTest {
   async run() {
@@ -88,6 +89,8 @@ class PasswordResetRequest extends BaseTest {
       await user.save();
 
       const app = new Application();
+      app.setConfiguration(config);
+      app.bootstrap();
 
       const passwordResetUpdate = new PasswordResetRequestAction();
       passwordResetUpdate.setApplication(app);

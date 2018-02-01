@@ -3,7 +3,6 @@ import AbstractAction from "../../../Framework/AbstractAction";
 import UnauthorizedError from "../../../Framework/Errors/UnauthorizedError";
 import UsersCollection from "../../Users/Collections/Users";
 import Authorization from "../index";
-import PasswordStrategy from "../Strategies/PasswordStrategy";
 
 /**
  * @swagger
@@ -52,14 +51,14 @@ class ProfileAction extends AbstractAction {
       throw error;
     }
 
-    const decodedData = await jwt.decode(jwtString, PasswordStrategy.getJwtParams());
+    const decodedData = await jwt.decode(jwtString, Authorization.getJwtParams());
 
     if (!decodedData || !decodedData.email) {
       throw error;
     }
 
     const user = UsersCollection.loadOne({ email: decodedData.email });
-    if (!user) {
+    if (user === null) {
       throw error;
     }
 

@@ -1,5 +1,4 @@
 import jwt from "jsonwebtoken";
-import config from "../config";
 import AbstractListener from "../Framework/AbstractListener";
 import Router from "../Framework/Application/Router";
 
@@ -20,6 +19,7 @@ class RenewJwt extends AbstractListener {
    * Listener entry point
    */
   async handle ({ expressRes, expressReq }) {
+    const config = this.getApplication().getConfiguration();
     /**
      * Renew auth token on all calls that require auth
      */

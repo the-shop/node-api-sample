@@ -1,11 +1,19 @@
+# Directories
+
 dist/
 public/
-.env
 node_modules/
+.idea/
+
+# Config files
+
+.env
+
+# Log files
+
 npm-debug.log
-yarn.lock
 yarn-error.log
+yarn.lock
 package.lock
 package-lock.json
 newrelic_agent.log
-.idea/

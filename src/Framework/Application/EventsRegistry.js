@@ -1,7 +1,6 @@
 import fs from "fs";
 import { join } from "path";
 import AbstractListener from "../AbstractListener";
-import config from "../../config";
 
 /**
  * Application is written using events, this class is in charge of listening / triggering events
@@ -65,10 +64,11 @@ class EventsRegistry {
    *
    * @param eventName
    * @param payload
-   * @returns {Array}
+   * @param request
+   * @param response
+   * @returns {Promise<Array>}
    */
-
-  async trigger (eventName, payload = {}) {
+  async trigger (eventName, payload = {}, request, response) {
     this.getApplication().log("Triggering event %s", eventName);
 
     let responses = [];
@@ -92,11 +92,10 @@ class EventsRegistry {
           });
 
           if (listener.isAsync() === true) {
-            asyncPromises.push(listener.handle(payload));
+            asyncPromises.push(listener.handle(payload, request, response));
           } else {
-            syncPromises.push(listener.handle(payload));
+            syncPromises.push(listener.handle(payload, request, response));
           }
-
         });
 
         syncPromises = await Promise.all(syncPromises);
@@ -117,12 +116,14 @@ class EventsRegistry {
   async register() {
     this.getApplication().log("REGISTER: Listeners");
 
-    // Register listeners from static folder /src/Listeners
-    const staticListenersdirectory = join(__dirname, "../../Listeners");
-    this.registerListenersFromDirectory(staticListenersdirectory);
+    const { rootDir, listenerPaths } = this.getApplication().getConfiguration();
+
+    // Register listeners from listeners static folder defined in configuration
+    const staticListenersDirectory = join(rootDir, listenerPaths.staticPath);
+    this.registerListenersFromDirectory(staticListenersDirectory);
 
     // Register listeners for services
-    const servicesDir = join(__dirname, "../../Services");
+    const servicesDir = join(rootDir, listenerPaths.servicesPath);
     fs.readdirSync(servicesDir)
     // Filter out .js files in Services directory
       .filter(one => one.match(/^(.(?!\.js$))+$/))
@@ -154,9 +155,10 @@ class EventsRegistry {
    * Listener entry point
    */
   async generateDocumentation () {
+    const configuration = this.getApplication().getConfiguration();
     this.getApplication().log(" - documentation for the listeners is generating...");
-    if (config.env === "production") {
-      this.getApplication().log(` - detected "${config.env}" NODE_ENV, skipping docs generation...`);
+    if (configuration.env === "production") {
+      this.getApplication().log(` - detected "${configuration.env}" NODE_ENV, skipping docs generation...`);
       return false;
     }
 
@@ -218,8 +220,9 @@ class EventsRegistry {
    * @returns {Promise<*>}
    */
   async getAllEventsForDocumentation() {
-    if (config.env === "production") {
-      this.getApplication().log(` - detected "${config.env}" NODE_ENV, skipping events search...`);
+    const configuration = this.getApplication().getConfiguration();
+    if (configuration.env === "production") {
+      this.getApplication().log(` - detected "${configuration.env}" NODE_ENV, skipping events search...`);
       return {};
     }
 
@@ -230,7 +233,7 @@ class EventsRegistry {
 
     return new Promise(resolve => {
       // Require here since it's just for dev environment
-      const search = require("findit2")(join(__dirname, "../../")); // eslint-disable-line
+      let search = require("findit2")(join(__dirname, "../../")); // eslint-disable-line
 
       search.on("file", (file) => {
         const fileContent = fs.readFileSync(file, "utf8");
