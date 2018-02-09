@@ -97,10 +97,10 @@
     "type": "git",
     "url": "https://github.com/the-shop/node-api-sample"
   },
-  "author":{
-     "name": "Mladen Lotar",
-     "email": "mladen@the-shop.io"
-   },
+  "author": {
+    "name": "Mladen Lotar",
+    "email": "mladen@the-shop.io"
+  },
   "homepage": "https://github.com/the-shop/node-api-sample",
   "bugs": {
     "url": "https://github.com/the-shop/node-api-sample/issues"

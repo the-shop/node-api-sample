@@ -27,11 +27,11 @@ class Query {
       if (this.checkIfKeyExists(attributeName)) {
         const parsedAttribute = this.parseAttribute(attributeName, queryObject[attributeName], search);
         if (search) {
-          if (this.builtQueryObject["or"] === undefined) {
-            this.builtQueryObject["or"] = [];
+          if (this.builtQueryObject["$or"] === undefined) {
+            this.builtQueryObject["$or"] = [];
           }
 
-          this.builtQueryObject["or"].push(parsedAttribute);
+          this.builtQueryObject["$or"].push(parsedAttribute);
         } else {
           Object.assign(this.builtQueryObject, parsedAttribute);
         }

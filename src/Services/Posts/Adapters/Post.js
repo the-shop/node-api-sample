@@ -89,8 +89,10 @@ class Post extends AbstractAdapter {
     if (modelData.owner !== undefined) {
       owner = null;
       const ownerModel = await UsersCollection.loadOne({id: modelData.owner});
-      if (ownerModel) {
+      if (ownerModel && ownerModel.id !== model.id) {
         owner = await userAdapter.adapt(ownerModel);
+      } else if (ownerModel && ownerModel.id === model.id) {
+        owner = model;
       }
     }
 

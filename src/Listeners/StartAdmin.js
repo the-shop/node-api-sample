@@ -2,6 +2,7 @@ import fs from "fs";
 import path from "path";
 import AbstractListener from "../Framework/AbstractListener";
 import Application from "../Application";
+import config from "../config";
 
 /**
  * Starts the administration
@@ -29,7 +30,7 @@ class StartAdmin extends AbstractListener {
       // Serve index.html that will start up React application
       this.getApplication()
         .getExpress()
-        .get("/admin*", function (req, res) {
+        .get(`${config.admin.uri}`, function (req, res) {
           res.writeHead(200, {"Content-Type": "text/html"});
           res.end(file);
         });

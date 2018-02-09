@@ -89,7 +89,7 @@ class LoadAction extends AbstractAction {
   /**
    * Actual handler for the API endpoint
    */
-  async handle ({ query, fields, start, end, sort, order }, expressReq, expressRes) {
+  async handle ({ query, fields, start, end, sort, order }, req, res) {
     await this.trigger("EVENT_ACTION_POST_LOAD_MODELS_PRE");
 
     const models = await PostsCollection.load(
@@ -103,7 +103,7 @@ class LoadAction extends AbstractAction {
 
     await this.trigger("EVENT_ACTION_POST_LOAD_MODELS_LOADED", models);
 
-    expressRes.header("X-Total-Count", await PostsCollection.count(query));
+    res.addHeader("X-Total-Count", await PostsCollection.count(query));
 
     return models;
   }

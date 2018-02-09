@@ -20,7 +20,7 @@ class ApiResponseOutput extends AbstractListener {
   /**
    * Listener entry point
    */
-  async handle({ error, response, expressRes, expressReq }) {
+  async handle({ error, response, httpRequest, httpResponse }) {
     // To be on safe side, check for error and do nothing if it happens
     if (error) {
       return null;
@@ -33,15 +33,16 @@ class ApiResponseOutput extends AbstractListener {
     if (Array.isArray(response)) {
       const modelPromises = [];
 
-      response.forEach(model => modelPromises.push(this.formatSingleModel(model, expressReq.url)));
+      response.forEach(model => modelPromises.push(this.formatSingleModel(model, httpRequest.getUrl())));
 
       out.models = await Promise.all(modelPromises);
 
       // Build out pagination part of response
-      const start = parseInt(expressReq.query.start || 0, 10);
-      const end = parseInt(expressReq.query.end || 10, 10);
+      const query = httpRequest.getQuery();
+      const start = parseInt(query.start || 0, 10);
+      const end = parseInt(query.end || 10, 10);
       // Number of responses for given query
-      const totalCount = parseInt(expressRes.get("X-Total-Count") || response.length, 10);
+      const totalCount = parseInt(httpResponse.getHeader("X-Total-Count") || response.length, 10);
       // Number of models in response
       const modelsCount = response.length;
       // Number of pages for given "query", "start" and "end" request values
@@ -51,12 +52,12 @@ class ApiResponseOutput extends AbstractListener {
         modelsCount,
         start,
         end,
-        sort: expressReq.query.sort || "id",
-        order: expressReq.query.sort || "asc",
+        sort: query.sort || "id",
+        order: query.sort || "asc",
         totalCount,
       };
     } else {
-      out.model = await this.formatSingleModel(response, expressReq.url);
+      out.model = await this.formatSingleModel(response, httpRequest.getUrl());
     }
 
     const eventResponses = await this.getApplication()
@@ -73,7 +74,12 @@ class ApiResponseOutput extends AbstractListener {
       out = eventResponses[0];
     }
 
-    expressRes.status(200).json(out);
+    /**
+     * Send response back through express response
+     */
+    httpResponse.setCode(200)
+      .setBody(out)
+      .json();
 
     return out;
   }

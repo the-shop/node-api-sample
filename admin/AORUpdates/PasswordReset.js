@@ -66,7 +66,7 @@ const renderInput = ({ meta: { touched, error } = {}, input: { ...inputProps }, 
 
 class PasswordReset extends Component {
 
-  passwordReset = ({ email, password, passwordConfirm  }) => {
+  passwordReset = ({ password, passwordConfirm  }) => {
     const { showNotification } = this.props;
     const queryParams = queryString.parse(this.props.location.search);
     const token = queryParams.token || null;
@@ -85,7 +85,6 @@ class PasswordReset extends Component {
         headers,
         body: JSON.stringify({
           token,
-          email,
           password,
           passwordConfirm
         })
@@ -117,13 +116,6 @@ class PasswordReset extends Component {
             </div>
             <form onSubmit={handleSubmit(this.passwordReset)}>
               <div style={styles.form}>
-                <div style={styles.input} >
-                  <Field
-                    name="email"
-                    component={renderInput}
-                    floatingLabelText={translate("aor.auth.email")}
-                  />
-                </div>
                 <div style={styles.input} >
                   <Field
                     type="password"
@@ -178,7 +170,6 @@ const enhance = compose(
     validate: (values, props) => {
       const errors = {};
       const { translate } = props;
-      if (!values.email) errors.email = translate("aor.validation.required");
       if (!values.password) errors.password = translate("aor.validation.required");
       if (!values.passwordConfirm) errors.passwordConfirm = translate("aor.validation.required");
       return errors;

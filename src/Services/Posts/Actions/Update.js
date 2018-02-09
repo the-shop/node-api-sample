@@ -86,7 +86,7 @@ class UpdateAction extends AbstractAction {
       id: request.params.id,
       title: request.body.title,
       content: request.body.content,
-  };
+    };
   }
 
   /**

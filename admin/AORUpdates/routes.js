@@ -1,8 +1,8 @@
 import React from "react";
 import { Route } from "react-router-dom";
-import PasswordResetRequest from "./PasswordResetRequest";
-import PasswordReset from "./PasswordReset";
-import Register from "./Register";
+import PasswordResetRequest from "./pages/PasswordResetRequest";
+import PasswordReset from "./pages/PasswordReset";
+import Register from "./pages/Register";
 
 export default [
   <Route exact path="/password-reset-request" component={PasswordResetRequest} noLayout key="passwordResetRequest" />,

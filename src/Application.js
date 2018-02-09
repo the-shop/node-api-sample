@@ -354,6 +354,42 @@ class Application {
   }
 
   /**
+   * Setter for Request instance
+   * @param requestInstance
+   * @returns {Application}
+   */
+  setRequest(requestInstance) {
+    this.request = requestInstance;
+    return this;
+  }
+
+  /**
+   * Getter for Request instance
+   * @returns {Request}
+   */
+  getRequest() {
+    return this.request;
+  }
+
+  /**
+   * Setter for Response instance
+   * @param responseInstance
+   * @returns {Application}
+   */
+  setResponse(responseInstance) {
+    this.response = responseInstance;
+    return this;
+  }
+
+  /**
+   * Getter for Response instance
+   * @returns {Response}
+   */
+  getResponse() {
+    return this.response;
+  }
+
+  /**
    * Log helper
    */
   log () {

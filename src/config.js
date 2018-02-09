@@ -31,6 +31,7 @@ const config = {
   },
   admin: {
     host: process.env.ADMIN_HOST || "http://localhost:3000",
+    uri: process.env.ADMIN_ROUTE_URI || "/admin",
     passwordResetUri: process.env.ADMIN_PASSWORD_RESET_URI || "/reset-password",
   },
   swagger: {
@@ -78,6 +79,10 @@ const config = {
       uploadsBucketRegion: process.env.AMAZON_UPLOAD_BUCKET_REGION,
       url: process.env.AMAZON_S3_URL || "https://s3.amazonaws.com/",
     }
+  },
+  stripe: {
+    publishableKey: process.env.STRIPE_PUBLISHABLE_KEY,
+    secretKey: process.env.STRIPE_SECRET_KEY,
   },
   web: {
     uploadsDirectory: "uploads/"

@@ -5,16 +5,21 @@ import withWidth from "material-ui/utils/withWidth";
 import { AppBarMobile, Restricted } from "admin-on-rest";
 import { Card, CardTitle, CardActions } from "material-ui/Card";
 import FlatButton from "material-ui/FlatButton";
+import adminRouteUri from "adminRouteUri";
 import { fetchJson } from "../jsonServer";
 import cookies from "../Cookies";
 
+import {
+  deepOrange700,
+} from "material-ui/styles/colors";
+
 const styles = {
-  card: { borderLeft: "solid 4px #ff9800", flex: 1, margin: "0" },
+  card: { borderLeft: `solid 4px ${deepOrange700}`, flex: 1, margin: "0.5em" },
   cardActions: { width: "100%", textAlign: "right" },
   flex: { display: "flex", flexWrap: "wrap", marginLeft: "1em", marginRight: "1em" },
   fullWidthFlex: { display: "flex", flexWrap: "wrap", marginLeft: "0", marginRight: "0" },
-  leftCol: { flex: "1 1 50%", marginRight: "1em", marginLeft: "-1em", marginBottom: "0.5em", maxWidth: "50%" },
-  rightCol: { flex: "1 1 50%", marginLeft: "1em", marginRight: "-1em", marginBottom: "0.5em", maxWidth: "50%" },
+  leftCol: { flex: "1 1 50%", marginRight: "0", marginLeft: "0", marginBottom: "0.5em", maxWidth: "50%" },
+  rightCol: { flex: "1 1 50%", marginLeft: "0", marginRight: "0", marginBottom: "0.5em", maxWidth: "50%" },
   fullWidthCol: { flex: "1 1 100%", marginLeft: "0", marginRight: "0", marginBottom: "0.5em", maxWidth: "100%" },
 };
 
@@ -54,7 +59,7 @@ class Dashboard extends Component {
                 <CardActions style={styles.cardActions}>
                   <FlatButton
                     label="View"
-                    href={`/admin#/${key.toDash()}`}
+                    href={`${adminRouteUri}#/${key.toDash()}`}
                   />
                 </CardActions>
 

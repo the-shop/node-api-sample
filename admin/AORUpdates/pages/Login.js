@@ -56,14 +56,14 @@ const styles = {
 };
 
 function getColorsFromTheme(theme) {
-  if (!theme) return { primary1Color: cyan500, accent1Color: pinkA200 };
+  if (!theme) return { primary2Color: cyan500, accent1Color: pinkA200 };
   const {
     palette: {
-      primary1Color,
+      primary2Color,
       accent1Color,
     },
   } = theme;
-  return { primary1Color, accent1Color };
+  return { primary2Color, accent1Color };
 }
 
 // see http://redux-form.com/6.4.3/examples/material-ui/
@@ -85,10 +85,10 @@ class Login extends Component {
   render() {
     const { handleSubmit, submitting, translate } = this.props;
     const muiTheme = getMuiTheme(customTheme);
-    const { primary1Color, accent1Color } = getColorsFromTheme(muiTheme);
+    const { primary2Color, accent1Color } = getColorsFromTheme(muiTheme);
     return (
       <MuiThemeProvider muiTheme={muiTheme}>
-        <div style={{ ...styles.main, backgroundColor: primary1Color }}>
+        <div style={{ ...styles.main, backgroundColor: primary2Color }}>
           <Card style={styles.card}>
             <div style={styles.avatar}>
               <Avatar backgroundColor={accent1Color} icon={<LockIcon />} size={60} />

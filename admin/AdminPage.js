@@ -3,10 +3,18 @@ import React, { Component } from "react";
 import { Admin, Resource } from "admin-on-rest";
 import { Delete } from "admin-on-rest/lib/mui";
 
+import Utility from "./Utility";
+import translationMessages from "./translation";
+
 import "../src/Helpers/String";
 
+import AdminLayout from "./AORUpdates/components/AdminLayout";
+import Menu from "./AORUpdates/components/Menu";
+
 import routes from "./AORUpdates/routes";
-import Login from "./AORUpdates/Login";
+import Login from "./AORUpdates/pages/Login";
+
+import Dashboard from "./Dashboard/Component";
 
 import UsersList from "./Users/List";
 import UsersEdit from "./Users/Edit";
@@ -20,10 +28,6 @@ import CommentsList from "./Comments/List";
 import CommentsEdit from "./Comments/Edit";
 import CommentsCreate from "./Comments/Create";
 
-import Utility from "./Utility";
-import Dashboard from "./Dashboard/Component";
-import translationMessages from "./translation";
-
 class AdminPage extends Component {
   render() {
     return (
@@ -36,6 +40,8 @@ class AdminPage extends Component {
         loginPage={Login}
         messages={translationMessages}
         restClient={Utility.jsonServer("/api/v1", Utility.httpClient)}
+        appLayout={AdminLayout}
+        menu={Menu}
       >
 
         <Resource

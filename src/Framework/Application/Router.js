@@ -3,6 +3,8 @@ import passport from "passport";
 import FrameworkError from "../Errors/FrameworkError";
 import UnauthorizedError from "../Errors/UnauthorizedError";
 import "../../Helpers/String";
+import Request from "./Http/Request";
+import Response from "./Http/Response";
 
 /**
  * Handles routes
@@ -59,12 +61,26 @@ class Router {
           const routeHandler = async (req, res, next) => {
             const startMs = new Date();
             let endMs = null;
+
+            // Request and response wrappers for express request and response
+            const httpRequest = new Request();
+            httpRequest.setApplication(this.getApplication());
+            await httpRequest.buildRequest(req);
+
+            const httpResponse = new Response();
+            httpResponse.setApplication(this.getApplication());
+            await httpResponse.buildResponse(res);
+
+            this.getApplication()
+              .setRequest(httpRequest)
+              .setResponse(httpResponse);
+
             try {
               this.getApplication()
                 .getEventsRegistry()
                 .trigger(Router.EVENT_ROUTER_ROUTE_HANDLE_PRE, {
-                  expressReq: req,
-                  expressRes: res,
+                  httpRequest: httpRequest,
+                  httpResponse: httpResponse,
                   expressNext: next,
                 });
 
@@ -72,13 +88,13 @@ class Router {
               auth.setAuthType("user")
                 .setId(isPublic ? "$everyone" : "$unauthorized");
 
-              if (req.user) {
+              if (httpRequest.user) {
                 auth.setAuthType("user")
                   .setId("$authorized");
 
-                if (req.user.role) {
+                if (httpRequest.user.role) {
                   auth.setAuthType("role")
-                    .setId(req.user.role);
+                    .setId(httpRequest.user.role);
                 }
               }
 
@@ -86,9 +102,9 @@ class Router {
               actionInstance.setResponse(res);
               actionInstance.setAcl(this.getApplication().getAcl());
 
-              const actionInput = await actionInstance.getActionInput(req);
+              const actionInput = await actionInstance.getActionInput(httpRequest);
 
-              const response = await actionInstance.handle(actionInput, req, res, next);
+              const response = await actionInstance.handle(actionInput, httpRequest, httpResponse, next);
 
               // If there's no response from the action handler, that's a problem...
               if (!response) {
@@ -111,8 +127,8 @@ class Router {
                   Router.EVENT_ROUTER_ROUTE_HANDLE_POST, {
                     error: null,
                     response: response,
-                    expressReq: req,
-                    expressRes: res,
+                    httpRequest: httpRequest,
+                    httpResponse: httpResponse,
                     expressNext: next,
                   });
             } catch (handlerError) {
@@ -131,8 +147,8 @@ class Router {
                   Router.EVENT_ROUTER_ROUTE_HANDLE_POST, {
                     error: handlerError,
                     response: null,
-                    expressReq: req,
-                    expressRes: res,
+                    httpRequest: httpRequest,
+                    httpResponse: httpResponse,
                     expressNext: next,
                   });
 

@@ -186,7 +186,7 @@ class Query extends BaseTest {
         date: momentDate.milliseconds(0).toISOString(),
         mixed: { test: "testing" },
         number: { $gte: 10, $lt: 20 },
-        "or": [ { string: new RegExp("testingWithEnum", "i") } ]
+        "$or": [ { string: new RegExp("testingWithEnum", "i") } ]
       }, query.builtQueryObject);
       test.end();
     });

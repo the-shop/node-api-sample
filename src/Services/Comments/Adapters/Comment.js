@@ -90,8 +90,10 @@ class Comment extends AbstractAdapter {
     if (modelData.ownerId !== undefined) {
       ownerId = null;
       const ownerIdModel = await UsersCollection.loadOne({id: modelData.ownerId});
-      if (ownerIdModel) {
+      if (ownerIdModel && ownerIdModel.id !== model.id) {
         ownerId = await userAdapter.adapt(ownerIdModel);
+      } else if (ownerIdModel && ownerIdModel.id === model.id) {
+        ownerId = model;
       }
     }
 
@@ -99,8 +101,10 @@ class Comment extends AbstractAdapter {
     if (modelData.owner !== undefined) {
       owner = null;
       const ownerModel = await UsersCollection.loadOne({id: modelData.owner});
-      if (ownerModel) {
+      if (ownerModel && ownerModel.id !== model.id) {
         owner = await userAdapter.adapt(ownerModel);
+      } else if (ownerModel && ownerModel.id === model.id) {
+        owner = model;
       }
     }
 

@@ -8,6 +8,15 @@ Application that serves as REST API and is written on top of Node.JS and Express
 
 Application is event driven and code structure allows easy micro service deployment.
 
+#### Why events?
+
+Given the code microservice structure making it event based made sense just because of easier code functionality
+extending in the future.
+
+All developer has to do is listen to specific event to re-use the logic, without finding
+a good place in code to extract the functionality to - place is already there - the `src/Listeners/` directory (more
+on that below where code structure is explained).
+
 ### Registered Services
 
 Following services are set up:
@@ -46,7 +55,7 @@ Documentation is available at: [http://localhost:3030/api-docs/](http://localhos
 ## Third party dependencies
 
  - `NewRelic` - for monitoring
- - TODO: S3,...
+ - `S3` - for file uploads
 
 ## Configuration
 
@@ -58,6 +67,7 @@ information.
 
  - `admin/` source of React administration
  - `docs/` documentation on specific topics
+ - `public/` express uses this directory to serve static assets
  - `src/` main source code for the project
 
    - `Cron/` directory contains all of cron jobs
@@ -66,10 +76,10 @@ information.
    - `Helpers/` directory all of the helper classes used in the project
    - `Services/` directory contains all of services
 
-     - `<SERVICE_NAME>`
+     - `<SERVICE_NAME>` name of the service
 
         - `Adapters/` directory contains all of API output adapters for specific service
-         - `Collections/` directory contains all collections that service depends on
+        - `Collections/` directory contains all collections that service depends on
         - `Models/` directory contains all models that service depends on
         - `Listeners/` directory contains all service listeners
 
@@ -88,7 +98,7 @@ Both list of all defined (and triggered) events and map of what listener listens
 
 Explanation on how to implement new listeners can be found in `src/Listeners/README.md`.
 
-Also, each of services can have own events.
+Each of services can have own events.
 
 ## Testing
 

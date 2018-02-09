@@ -89,7 +89,7 @@ class LoginAction extends AbstractAction {
     }
 
     const token = jwt.sign({ email: user.email }, config.jwt.secret);
-    res.header("Authorization", `Bearer ${token}`);
+    res.addHeader("Authorization", `Bearer ${token}`);
 
     return user;
   }

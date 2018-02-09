@@ -18,15 +18,15 @@ class RenewJwt extends AbstractListener {
   /**
    * Listener entry point
    */
-  async handle ({ expressRes, expressReq }) {
+  async handle ({ httpRequest, httpResponse }) {
     const config = this.getApplication().getConfiguration();
     /**
      * Renew auth token on all calls that require auth
      */
-    if (expressReq.user) {
+    if (httpRequest.user) {
       const jwtOptions = {};
-      const token = await jwt.sign({ email: expressReq.user.email }, config.jwt.secret, jwtOptions);
-      expressRes.header("Authorization", `Bearer ${token}`);
+      const token = await jwt.sign({ email: httpRequest.user.email }, config.jwt.secret, jwtOptions);
+      httpResponse.addHeader("Authorization", `Bearer ${token}`);
     }
   }
 }

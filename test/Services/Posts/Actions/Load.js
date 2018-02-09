@@ -26,6 +26,7 @@ class Load extends PostsBaseTest {
       test.equal(response.statusCode, 200);
       test.equal(response.body.error, false, "No error");
       test.equal(Array.isArray(response.body.models), true, "Field type 'models' is array");
+      test.equal(response.body.models.length > 0, true);
 
       response.body.models.map(one => this.validateModelResponseFields(one));
 

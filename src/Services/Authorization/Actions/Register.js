@@ -116,7 +116,7 @@ class RegisterAction extends AbstractAction {
     await this.trigger("EVENT_ACTION_REGISTER_USER_POST", user);
 
     const token = jwt.sign({ email: user.email }, config.jwt.secret);
-    res.header("Authorization", `Bearer ${token}`);
+    res.addHeader("Authorization", `Bearer ${token}`);
 
     return user;
   }

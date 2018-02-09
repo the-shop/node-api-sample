@@ -115,7 +115,7 @@ class UpdateAction extends AbstractAction {
       lastName: request.body.lastName,
       email: request.body.email,
       role: request.body.role,
-  };
+    };
   }
 
   /**

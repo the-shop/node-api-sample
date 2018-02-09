@@ -1,9 +1,13 @@
 import path from "path";
 import webpack from "webpack";
+import config from "../src/config";
 
 export default {
   devtool: "cheap-module-eval-source-map", // more info:https://webpack.github.io/docs/build-performance.html#sourcemaps and https://webpack.github.io/docs/configuration.html#devtool
   target: "web", // necessary per https://webpack.github.io/docs/testing.html#compile-and-test
+  node: {
+    fs: "empty"
+  },
   entry: "./admin/admin.js",
   output: {
     path: path.resolve(__dirname, "../public"),
@@ -18,5 +22,8 @@ export default {
     loaders: [
       {test: /\.js$/, include: path.join(__dirname), loaders: ["babel-loader"]},
     ]
+  },
+  externals: {
+    adminRouteUri: JSON.stringify(config.admin.uri) //eslint-disable-line
   }
 };
