@@ -1,5 +1,6 @@
 import debug from "debug";
 import superagent from "superagent";
+import jwt from "jsonwebtoken";
 import EventsRegistry from "./Framework/Application/EventsRegistry";
 import FrameworkError from "./Framework/Errors/FrameworkError";
 import Router from "./Framework/Application/Router";
@@ -9,6 +10,8 @@ import AdaptersRegistry from "./AdaptersRegistry";
 import TemplatesRegistry from "./TemplatesRegistry";
 import Acl from "./Framework/Acl/Acl";
 import Authorization from "./Framework/Acl/Authorization";
+import FileLogger from "./Logger/FileLogger";
+import config from "./config";
 
 const log = debug("node-api-sample:server:log:message");
 const logError = debug("node-api-sample:server:log:error");
@@ -34,6 +37,12 @@ class Application {
    * @type {string}
    */
   static EVENT_APPLICATION_RUN_POST = "EVENT_APPLICATION_RUN_POST";
+
+  /**
+   * Triggers after Express routes for API are registered
+   * @type {string}
+   */
+  static EVENT_EXPRESS_API_ROUTES_REGISTERED_POST = "EVENT_EXPRESS_API_ROUTES_REGISTERED_POST";
 
   /**
    * Triggers before Express.JS application is started
@@ -159,17 +168,21 @@ class Application {
       return await request;
     } catch (requestError) {
       this.logError("%s %s: HTTP request error: ", requestMethod, url, requestError.message);
+
       this.logError(
         "%s %s: Code: %s; Headers: %O, Body: %O: ",
         requestMethod,
         url,
-        requestError.response.status,
-        requestError.response.headers,
-        requestError.response.body
+        requestError.response ? requestError.response.status : 500,
+        requestError.response ? requestError.response.headers : undefined,
+        requestError.response ? requestError.response.body : undefined,
       );
+
       if (graceful !== true) {
-        throw new FrameworkError(requestError.response.body.errors[0]);
+        throw new FrameworkError(requestError.response ? requestError.response.body.errors[0] : JSON.stringify(requestError));
       }
+
+      return requestError.response.body;
     }
   }
 
@@ -394,6 +407,9 @@ class Application {
    */
   log () {
     log(...arguments);
+    const message = [...arguments].join(" ");
+    this.logToFile("application.log", this.getConfiguration().rootDir, message);
+    return this;
   }
 
   /**
@@ -401,6 +417,44 @@ class Application {
    */
   logError () {
     logError(...arguments);
+    const message = [...arguments].join(" ");
+    this.logToFile("application.error.log", this.getConfiguration().rootDir, message);
+    return this;
+  }
+
+  /**
+   * Log to file
+   *
+   * Will write to file if not production environment or environment variable `DEBUG` is set to true
+   *
+   * @param filename
+   * @param fileDirPath
+   * @param message
+   * @returns {boolean}
+   */
+  logToFile(filename, fileDirPath, message) {
+    const { debug } = this.getConfiguration();
+    if (debug === true) {
+      return false;
+    }
+
+    const fileLogger = new FileLogger();
+
+    fileLogger.setApplication(this);
+    fileLogger.setFilename(filename);
+    fileLogger.setFileDirPath(fileDirPath);
+    fileLogger.logMessage(message);
+
+    return true;
+  }
+
+  /**
+   * Generates JWT that can be used by system internally as service account
+   *
+   * @returns {string}
+   */
+  static getServiceAuthorizationJWT() {
+    return jwt.sign({ email: config.application.serviceAccountEmail }, config.jwt.secret);
   }
 }
 

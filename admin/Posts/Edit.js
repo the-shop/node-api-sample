@@ -1,4 +1,5 @@
 import React from "react";
+
 import {
   DisabledInput,
   Edit,
@@ -13,12 +14,14 @@ const EditPage = props => (
     {...props}
   >
     <SimpleForm>
-      <DisabledInput source="id" />
+      <DisabledInput source="id" /> 
+
       <TextInput
         source="title"
         label="Post title"
         validate={required}
       />
+
       <TextInput
         source="content"
         label="Post content"

@@ -32,11 +32,15 @@ class CommentCollection extends Collection {
   }
 
   /**
-   * Loads single model or returns null
-   */
-  static loadOne(query = {}) {
+  * Loads single model or returns null
+  *
+  * @param query
+  * @param fields
+  * @returns {Promise<*>}
+  */
+  static loadOne(query = {}, fields = {}) {
     const Comment = mongoose.model("Comment");
-    return Collection.loadOne(Comment, query);
+    return Collection.loadOne(Comment, query, fields);
   }
 
   /**

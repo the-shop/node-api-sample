@@ -98,6 +98,8 @@ class CreateAction extends AbstractAction {
       throw new InputMalformedError("Email is taken.");
     }
 
+    await this.trigger("EVENT_ACTION_USER_CREATE_MODEL_ACTION_INPUT_POST");
+
     return {
       firstName: request.body.firstName,
       lastName: request.body.lastName,

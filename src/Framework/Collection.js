@@ -71,16 +71,28 @@ class Collection {
    *
    * @param Model
    * @param query
-   * @returns {{}|null}
+   * @param fields
+   * @returns {Promise<*>}
    */
-  static async loadOne(Model, query) {
+  static async loadOne(Model, query, fields = {}) {
     // Convert id to _id
     if (query.id) {
       query._id = query.id;
       delete query.id;
     }
 
-    return await Model.findOne(query);
+    const fieldsSelectObject = {};
+    Object.keys(fields).map(field => {
+      let selectorValue = 1;
+
+      if (typeof fields[field] === "object" && fields[field]["$slice"]) {
+          selectorValue = { $slice: fields[field]["$slice"] };
+      }
+
+      fieldsSelectObject[field] = selectorValue;
+    });
+
+    return await Model.findOne(query, fieldsSelectObject);
   }
 
   /**
@@ -120,9 +132,10 @@ class Collection {
    * @returns {Promise.<*>}
    */
   static async delete(Model, query) {
-    // Convert _id property to ObjectId
-    if (query._id) {
-      query._id = new mongoose.Types.ObjectId(query._id);
+    // Convert id to _id
+    if (query.id) {
+      query._id = query.id;
+      delete query.id;
     }
 
     return await Model.remove(query);

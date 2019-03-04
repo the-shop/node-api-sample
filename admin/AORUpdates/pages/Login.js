@@ -4,7 +4,6 @@ import { withRouter } from "react-router";
 import { propTypes, reduxForm, Field } from "redux-form";
 import { connect } from "react-redux";
 import compose from "recompose/compose";
-
 import MuiThemeProvider from "material-ui/styles/MuiThemeProvider";
 import getMuiTheme from "material-ui/styles/getMuiTheme";
 import { Card, CardActions } from "material-ui/Card";
@@ -13,10 +12,9 @@ import RaisedButton from "material-ui/RaisedButton";
 import TextField from "material-ui/TextField";
 import LockIcon from "material-ui/svg-icons/action/lock-outline";
 import { cyan500, pinkA200 } from "material-ui/styles/colors";
-import adminRouteUri from "adminRouteUri";
+import { translate, userLogin as userLoginAction } from "admin-on-rest";
 
-import { Notification, translate, userLogin as userLoginAction } from "admin-on-rest";
-
+import Notification from "../components/Notification";
 import customTheme from "../customTheme";
 
 const styles = {
@@ -76,7 +74,6 @@ const renderInput = ({ meta: { touched, error } = {}, input: { ...inputProps }, 
   />;
 
 class Login extends Component {
-
   login = ({ username, password }) => {
     const { userLogin, location } = this.props;
     userLogin({ username, password }, location.state ? location.state.nextPathname : "/");
@@ -120,7 +117,7 @@ class Login extends Component {
                   label={translate("aor.auth.register")}
                   fullWidth
                 />
-                <p style={styles.or}><a style={styles.forgotPassword} href={`${adminRouteUri}#/password-reset-request`}>Forgot your password?</a></p>
+                <p style={styles.or}><a style={styles.forgotPassword} href="/password-reset-request">Forgot your password?</a></p>
               </CardActions>
             </form>
           </Card>

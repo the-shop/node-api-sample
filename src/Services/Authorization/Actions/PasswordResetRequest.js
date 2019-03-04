@@ -51,20 +51,23 @@ class PasswordResetRequestAction extends AbstractAction {
    * Formats input values from request to be passed onto handle() method
    */
   async getActionInput (request) {
-    if (!request.body.email) {
-      throw new InputMalformedError("Field \"email\" is required");
+    if (typeof request.body.email !== "string") {
+        throw new InputMalformedError("Field \"email\" is required");
     }
 
-    request.body.email = request.body.email.toLowerCase().trim();
+    const email = request.body
+      .email
+      .toLowerCase()
+      .trim();
 
     const EmailValidator = new Email();
 
-    if (!EmailValidator.validateEmail(request.body.email)) {
+    if (!EmailValidator.validateEmail(email)) {
       throw new InputMalformedError("Invalid email format.");
     }
 
     return {
-      email: request.body.email,
+      email,
     };
   }
 

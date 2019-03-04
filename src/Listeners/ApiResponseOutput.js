@@ -1,3 +1,4 @@
+import moment from "moment";
 import AbstractListener from "../Framework/AbstractListener";
 import Router from "../Framework/Application/Router";
 
@@ -60,28 +61,54 @@ class ApiResponseOutput extends AbstractListener {
       out.model = await this.formatSingleModel(response, httpRequest.getUrl());
     }
 
-    const eventResponses = await this.getApplication()
+    // Let's see all event handlers
+    const registeredEvents = await this.getApplication()
       .getEventsRegistry()
-      .trigger(
-        ApiResponseOutput.EVENT_API_RESPONSE_OUTPUT_PRE, Object.assign({}, out)
-      );
+      .getAllRegistered();
 
-    /**
-     * We have got array of responses from events registry (all triggered listeners on one event)
-     * so we'll just account for the first one to return modified output
-     */
-    if (eventResponses.length > 0 ) {
-      out = eventResponses[0];
+    let formattedOutput = out;
+
+    // Check for output event handlers
+    const outputEventHandlers = registeredEvents[ApiResponseOutput.EVENT_API_RESPONSE_OUTPUT_PRE] || [];
+
+    // Iterate and let them mutate the output
+    for (let i = 0; i < outputEventHandlers.length; i++) {
+      const listener = outputEventHandlers[i];
+
+      if (listener instanceof AbstractListener === false) {
+        this.getApplication().logError("Listener must be instance of AbstractListener");
+        return false;
+      }
+
+      listener.setApplication(this.getApplication());
+
+      this.getApplication()
+        .getEventsRegistry()
+        .triggeredEvents
+        .push({
+          eventName: ApiResponseOutput.EVENT_API_RESPONSE_OUTPUT_PRE,
+          listener: listener.constructor.name,
+          timestampMs: moment().unix()
+        });
+
+      formattedOutput = await listener.handle(
+        formattedOutput,
+        httpRequest,
+        httpResponse,
+      );
     }
 
     /**
-     * Send response back through express response
+     * Send response back through express' response
      */
-    httpResponse.setCode(200)
-      .setBody(out)
-      .json();
+    if (httpResponse.getType() !== null) {
+      httpResponse.send(formattedOutput);
+    } else {
+      httpResponse.json(formattedOutput);
+    }
 
-    return out;
+
+    return formattedOutput;
   }
 
   async formatSingleModel(model, url) {

@@ -82,6 +82,8 @@ class UpdateAction extends AbstractAction {
       );
     }
 
+    await this.trigger("EVENT_ACTION_POST_UPDATE_MODEL_ACTION_INPUT_POST");
+
     return {
       id: request.params.id,
       title: request.body.title,

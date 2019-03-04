@@ -57,7 +57,7 @@ class ProfileAction extends AbstractAction {
       throw error;
     }
 
-    const user = UsersCollection.loadOne({ email: decodedData.email });
+    const user = await UsersCollection.loadOne({ email: decodedData.email });
     if (user === null) {
       throw error;
     }

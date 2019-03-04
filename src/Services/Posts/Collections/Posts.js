@@ -32,11 +32,15 @@ class PostCollection extends Collection {
   }
 
   /**
-   * Loads single model or returns null
-   */
-  static loadOne(query = {}) {
+  * Loads single model or returns null
+  *
+  * @param query
+  * @param fields
+  * @returns {Promise<*>}
+  */
+  static loadOne(query = {}, fields = {}) {
     const Post = mongoose.model("Post");
-    return Collection.loadOne(Post, query);
+    return Collection.loadOne(Post, query, fields);
   }
 
   /**

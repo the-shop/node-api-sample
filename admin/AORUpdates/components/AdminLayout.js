@@ -7,12 +7,10 @@ import autoprefixer from "material-ui/utils/autoprefixer";
 import CircularProgress from "material-ui/CircularProgress";
 import withWidth from "material-ui/utils/withWidth";
 import compose from "recompose/compose";
-
-import AdminRoutes from "admin-on-rest/lib/AdminRoutes";
 import AppBar from "admin-on-rest/lib/mui/layout/AppBar";
 import Sidebar from "admin-on-rest/lib/mui/layout/Sidebar";
 import Menu from "admin-on-rest/lib/mui/layout/Menu";
-import Notification from "admin-on-rest/lib/mui/layout/Notification";
+import Notification from "./Notification";
 import defaultTheme from "admin-on-rest/lib/mui/defaultTheme";
 import customTheme from "../customTheme";
 import { setSidebarVisibility as setSidebarVisibilityAction } from "admin-on-rest/lib/actions";
@@ -65,12 +63,10 @@ class Layout extends Component {
   render() {
     const {
       children,
-      customRoutes,
       dashboard,
       isLoading,
       logout,
       menu,
-      catchAll,
       theme,
       title,
       width,
@@ -112,13 +108,7 @@ class Layout extends Component {
                   )
                 }
               >
-                <AdminRoutes
-                  customRoutes={customRoutes}
-                  dashboard={dashboard}
-                  catchAll={catchAll}
-                >
-                  {children}
-                </AdminRoutes>
+                {children}
               </div>
               <Sidebar theme={theme}>
                 {createElement(menu || Menu, {
@@ -128,7 +118,7 @@ class Layout extends Component {
                 })}
               </Sidebar>
             </div>
-            <Notification />
+            <Notification/>
             {isLoading && (
               <CircularProgress
                 className="app-loader"
@@ -152,8 +142,6 @@ const componentPropType = PropTypes.oneOfType([
 
 Layout.propTypes = {
   children: PropTypes.oneOfType([PropTypes.func, PropTypes.node]),
-  catchAll: componentPropType,
-  customRoutes: PropTypes.array,
   dashboard: componentPropType,
   isLoading: PropTypes.bool.isRequired,
   logout: PropTypes.oneOfType([

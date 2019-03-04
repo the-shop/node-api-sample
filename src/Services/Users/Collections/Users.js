@@ -33,11 +33,15 @@ class UserCollection extends Collection {
   }
 
   /**
-   * Loads single model or returns null
-   */
-  static loadOne(query = {}) {
+  * Loads single model or returns null
+  *
+  * @param query
+  * @param fields
+  * @returns {Promise<*>}
+  */
+  static loadOne(query = {}, fields = {}) {
     const User = mongoose.model("User");
-    return Collection.loadOne(User, query);
+    return Collection.loadOne(User, query, fields);
   }
 
   /**

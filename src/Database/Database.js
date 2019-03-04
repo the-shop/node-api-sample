@@ -19,6 +19,7 @@ class Database {
    */
   constructor (options = {}) {
     this.options = options;
+    this.reconnects = 0;
   }
 
   /**
@@ -28,7 +29,7 @@ class Database {
    */
   connect () {
     const options = Object.assign({
-      useMongoClient: true,
+      useNewUrlParser: true,
       autoIndex: false, // Don't build indexes
       reconnectTries: Number.MAX_VALUE, // Never stop trying to reconnect
       reconnectInterval: 100, // Reconnect every 100ms
@@ -39,22 +40,31 @@ class Database {
     logMessage("Connecting mongo at %s with options %O", config.db, options);
     mongoose.Promise = Bluebird;
 
-    this.connection = mongoose.connect(config.db, options);
+    mongoose.connect(config.db, options)
+      .catch(
+        error => {
+          logError("Initial connection error: %s", error.message);
+        }
+      );
 
-    if (this.getApplication()) {
+    this.connection = mongoose.connection;
+
+    const app = this.getApplication();
+
+    if (app) {
       this.connection.on(
-      "connected",
-      () =>
-        this.getApplication()
-          .getEventsRegistry()
-          .trigger(Database.DATABASE_CONNECTION_CONNECTED)
+        "connected",
+        () => app.getEventsRegistry().trigger(Database.DATABASE_CONNECTION_CONNECTED)
+      );
+
+      this.connection.on(
+        "error",
+        () => logError
       );
     }
 
-    this.connection.on("error", logError);
-
     if (this.options.keepAlive) {
-      this.connection.on("disconnected", this.connect);
+      this.connection.on("disconnected", this.connect.bind(this));
     }
 
     return this.connection;

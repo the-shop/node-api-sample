@@ -37,13 +37,15 @@ class ResponseOutputListener extends BaseTest {
         ApiResponseOutput.EVENT_API_RESPONSE_OUTPUT_PRE, listener
       );
 
-      const user = UsersCollection.create({
+      let user = UsersCollection.create({
         firstName: this.getRandomizer().randomString(1),
         lastName: this.getRandomizer().randomString(1),
         email: this.getRandomEmail(),
         role:  "admin",
       });
       await UsersCollection.save(user);
+
+      user = user.toJSON();
 
       const { headers } = await this.registerTestUser();
 

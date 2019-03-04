@@ -1,6 +1,5 @@
 import AbstractAdapter from "../../../Framework/AbstractAdapter";
 import UsersCollection from "../../Users/Collections/Users";
-import UserAdapter from "../../Users/Adapters/User";
 
 /**
  * Comment response schema
@@ -38,6 +37,7 @@ import UserAdapter from "../../Users/Adapters/User";
  *     properties:
  *       error:
  *         type: boolean
+ *         example: false
  *       model:
  *         type: object
  *         $ref: '#/definitions/CommentModel'
@@ -50,6 +50,7 @@ import UserAdapter from "../../Users/Adapters/User";
  *     properties:
  *       error:
  *         type: boolean
+ *         example: false
  *       models:
  *         type: array
  *         items:
@@ -84,12 +85,19 @@ class Comment extends AbstractAdapter {
     const out = {};
     const modelData = model.toJSON();
 
-    const userAdapter = new UserAdapter();
+    const adapterRegistry = this.getApplication()
+      .getAdaptersRegistry();
+
+    const userAdapter = adapterRegistry.get("User", null);
 
     let ownerId = null;
     if (modelData.ownerId !== undefined) {
       ownerId = null;
-      const ownerIdModel = await UsersCollection.loadOne({id: modelData.ownerId});
+      const { queryFilter, allowedFields } = this.getApplication()
+        .getAcl()
+        .check("ADAPT_USER_MODEL");
+      const query = Object.assign({ id: modelData.ownerId }, queryFilter);
+      const ownerIdModel = await UsersCollection.loadOne(query, allowedFields);
       if (ownerIdModel && ownerIdModel.id !== model.id) {
         ownerId = await userAdapter.adapt(ownerIdModel);
       } else if (ownerIdModel && ownerIdModel.id === model.id) {
@@ -100,7 +108,11 @@ class Comment extends AbstractAdapter {
     let owner = null;
     if (modelData.owner !== undefined) {
       owner = null;
-      const ownerModel = await UsersCollection.loadOne({id: modelData.owner});
+      const { queryFilter, allowedFields } = this.getApplication()
+        .getAcl()
+        .check("ADAPT_USER_MODEL");
+      const query = Object.assign({ id: modelData.owner }, queryFilter);
+      const ownerModel = await UsersCollection.loadOne(query, allowedFields);
       if (ownerModel && ownerModel.id !== model.id) {
         owner = await userAdapter.adapt(ownerModel);
       } else if (ownerModel && ownerModel.id === model.id) {

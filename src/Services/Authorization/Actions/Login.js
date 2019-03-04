@@ -59,7 +59,12 @@ class LoginAction extends AbstractAction {
    * Formats input values from request to be passed onto handle() method
    */
   async getActionInput (request) {
-    if (!request.body.email) {
+    const email = request.body
+      .email
+      .toLowerCase()
+      .trim();
+
+    if (!email) {
       throw new InputMalformedError("Property 'email' is mandatory for this API call.");
     }
 
@@ -68,7 +73,7 @@ class LoginAction extends AbstractAction {
     }
 
     return {
-      email: request.body.email,
+      email,
       password: request.body.password
     };
   }
@@ -76,7 +81,7 @@ class LoginAction extends AbstractAction {
   /**
    * Actual handler for the API endpoint
    */
-  async handle ({email, password}, req, res) {
+  async handle ({ email, password }, req, res) {
     const config = this.getApplication().getConfiguration();
     const user = await UsersCollection.loadOne({ email: email.toLowerCase() });
 
@@ -89,6 +94,13 @@ class LoginAction extends AbstractAction {
     }
 
     const token = jwt.sign({ email: user.email }, config.jwt.secret);
+
+    res.getExpressRes()
+      .cookie(
+        "Authorization",
+        `Bearer ${token}`,
+        { path: "/" }
+      );
     res.addHeader("Authorization", `Bearer ${token}`);
 
     return user;

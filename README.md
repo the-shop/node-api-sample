@@ -21,7 +21,6 @@ on that below where code structure is explained).
 
 Following services are set up:
 
-
  - NewRelic
  - Crud
    - Users
@@ -30,7 +29,6 @@ Following services are set up:
  - Authorization
    - Enabled strategies: 
      - PasswordStrategy
- - Statistics
 
 ### API documentation
 
@@ -55,6 +53,7 @@ Documentation is available at: [http://localhost:3030/api-docs/](http://localhos
 ## Third party dependencies
 
  - `NewRelic` - for monitoring
+ - `Mailgun` - for transactional emails
  - `S3` - for file uploads
 
 ## Configuration
@@ -70,7 +69,7 @@ information.
  - `public/` express uses this directory to serve static assets
  - `src/` main source code for the project
 
-   - `Cron/` directory contains all of cron jobs
+   - `cron/` directory contains all of cron jobs
    - `Database/` directory contains seeders and Database class
    - `Framework/` directory all of the files used to run the application
    - `Helpers/` directory all of the helper classes used in the project
@@ -82,6 +81,8 @@ information.
         - `Collections/` directory contains all collections that service depends on
         - `Models/` directory contains all models that service depends on
         - `Listeners/` directory contains all service listeners
+
+   - `Templates/` directory contains custom transactional email templates
 
  - `test/` directory contains test files
  - `tools/` is used for various tasks (such is app startup)
@@ -117,6 +118,12 @@ To run all:
 
     $ yarn test # or `npm run test`
 
+To run code coverage report run:
+
+    $ yarn coverage:html # or `npm run coverage:html`
+
+And it will generate output html in `coverage/` directory.
+
 ## Seeding data
 
 Seeders are found in `src/Database/seed/` directory.
@@ -125,8 +132,6 @@ Seeders are found in `src/Database/seed/` directory.
 
 ### How are docs generated
 
-COMING SOON
+API documentation (swagger) is auto-generated from annotations in Adapters and Actions.
 
-### Extending functionality
-
-COMING SOON
+Events documentation (file: `docs/EVENTS.md`) is re-generated on application start.

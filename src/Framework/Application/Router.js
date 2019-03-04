@@ -84,23 +84,29 @@ class Router {
                   expressNext: next,
                 });
 
-              const auth = this.getApplication().getAcl().getAuthorization();
-              auth.setAuthType("user")
+              const acl = this.getApplication()
+                .getAcl();
+              const auth = acl
+                .getAuthorization();
+
+              auth.setAuthType("role")
                 .setId(isPublic ? "$everyone" : "$unauthorized");
 
               if (httpRequest.user) {
-                auth.setAuthType("user")
+                auth.setAuthType("role")
                   .setId("$authorized");
 
                 if (httpRequest.user.role) {
                   auth.setAuthType("role")
                     .setId(httpRequest.user.role);
                 }
+
+                auth.setUserId(httpRequest.user._id.toString());
               }
 
               actionInstance.setRequest(req);
               actionInstance.setResponse(res);
-              actionInstance.setAcl(this.getApplication().getAcl());
+              actionInstance.setAcl(acl);
 
               const actionInput = await actionInstance.getActionInput(httpRequest);
 
@@ -134,12 +140,13 @@ class Router {
             } catch (handlerError) {
               endMs = new Date();
               this.getApplication().log(
-                "Request failed: %s %s (at: %s, duration: %sms, code: %s)",
+                "Request failed: %s %s (at: %s, duration: %sms, code: %s, message: %s)",
                 httpMethod,
                 fullRoutePath,
                 moment().toISOString(),
                 endMs.getTime() - startMs.getTime(),
-                handlerError.code
+                handlerError.code,
+                handlerError.message,
               );
               this.getApplication()
                 .getEventsRegistry()
@@ -198,7 +205,7 @@ class Router {
           return next();
         })(req, res, next);
     } catch (error) {
-      throw new UnauthorizedError(error.message);
+      // There was error, ignore it since it's public route
     }
   }
 

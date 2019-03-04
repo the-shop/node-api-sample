@@ -23,7 +23,8 @@ const config = {
   },
   api: {
     host: process.env.API_HOST || "http://localhost:3030",
-    port: process.env.PORT || 3030
+    port: process.env.PORT || 3030,
+    corsWhitelistOrigins: process.env.API_CORS_WHITELIST_ORIGINS || "",
   },
   frontend: {
     host: process.env.FRONTEND_HOST || "http://localhost:3000",
@@ -35,41 +36,13 @@ const config = {
     passwordResetUri: process.env.ADMIN_PASSWORD_RESET_URI || "/reset-password",
   },
   swagger: {
-    host: process.env.SWAGGER_HOST || "http://localhost:3030"
+    host: process.env.SWAGGER_HOST || "http://localhost:3030",
+    docsUri: process.env.API_DOCS_URI || "/api-docs/",
   },
   contact: {
     name: process.env.GENERAL_CONTACT_NAME || "Company",
-    email: process.env.GENERAL_CONTACT_EMAIL_ADDRESS || "contact@company.com"
-  },
-  mailchimp: {
-    apiKey: process.env.MAILCHIMP_API_KEY,
-    lists: {
-      allUsers: process.env.MAILCHIMP_ALL_USERS_LIST_NAME || "All Users",
-    },
-    contact: {
-      company: process.env.MAILCHIMP_COMPANY_NAME || "Company",
-      address1: process.env.MAILCHIMP_COMPANY_ADDRESS1 || "Our address",
-      address2: process.env.MAILCHIMP_COMPANY_ADDRESS2,
-      city: process.env.MAILCHIMP_COMPANY_CITY || "New York",
-      state: process.env.MAILCHIMP_COMPANY_STATE || "New York",
-      zip: process.env.MAILCHIMP_COMPANY_ZIP || "44444",
-      country: process.env.MAILCHIMP_COMPANY_COUNTRY || "United States",
-      phone: process.env.MAILCHIMP_COMPANY_PHONE,
-    },
-    campaignDefaults: {
-      fromName: process.env.MAILCHIMP_CAMPAIGN_FROM_NAME
-      || process.env.GENERAL_CONTACT_NAME
-      || "Name",
-      fromEmail: process.env.MAILCHIMP_CAMPAIGN_FROM_EMAIL
-      ||  process.env.GENERAL_EMAIL_CONTACT_ADDRESS
-      || "contact@company.com",
-      subject: process.env.MAILCHIMP_CAMPAIGN_SUBJECT || "Campaign subject",
-      language: process.env.MAILCHIMP_CAMPAIGN_LANGUAGE || "en-US",
-    }
-  },
-  mailgun: {
-    apikey: process.env.MAILGUN_API_KEY,
-    domain: process.env.MAILGUN_DOMAIN,
+    email: process.env.GENERAL_CONTACT_EMAIL_ADDRESS || "contact@company.com",
+    paymentDisputesEmail: process.env.PAYMENT_DISPUTES_CONTACT_EMAIL_ADDRESS || "contact@company.com",
   },
   amazon: {
     s3: {
@@ -80,19 +53,16 @@ const config = {
       url: process.env.AMAZON_S3_URL || "https://s3.amazonaws.com/",
     }
   },
-  stripe: {
-    publishableKey: process.env.STRIPE_PUBLISHABLE_KEY,
-    secretKey: process.env.STRIPE_SECRET_KEY,
-  },
   web: {
-    uploadsDirectory: "uploads/"
+    uploadsDirectory: "uploads/",
   },
   listenerPaths: {
     staticPath: "/src/Listeners",
-    servicesPath: "/src/Services"
+    servicesPath: "/src/Services",
   },
   application: {
-    ownerId: process.env.OWNER_ID || "aaaaaaaaaaaaaaaaaaaaaaaa"
+    ownerId: process.env.OWNER_ID || "aaaaaaaaaaaaaaaaaaaaaaaa",
+    serviceAccountEmail: process.env.API_SERVICE_ACCOUNT_EMAIL || "email@service-account.com",
   }
 };
 

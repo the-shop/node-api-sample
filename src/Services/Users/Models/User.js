@@ -147,7 +147,7 @@ UserSchema.virtual("password")
       throw new FrameworkError("Token doesn't exist or has expired.");
     }
 
-    if (!/^(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$/g.test(password)) {
+    if (!/^(?=.*?[0-9])(?=.*?[\^()_=+{}[\]|\\/<>.,":;#?!@$%&*-]).{8,}$/g.test(password)) {
       throw new InputMalformedError(
         "Password must be at least 8 characters long and must contain at least one number and one special character!"
       );
@@ -174,9 +174,9 @@ UserSchema.static({});
 /**
  * Indexes
  */
-UserSchema.index({});
+//UserSchema.index({});
 
 /**
  * Register
  */
-mongoose.model("User", UserSchema);
+export default mongoose.model("User", UserSchema);

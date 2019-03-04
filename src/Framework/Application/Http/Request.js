@@ -3,18 +3,20 @@
  */
 class Request {
   async buildRequest(expressRequest) {
-    this.setExpressReq(expressRequest);
-    this.setMethod(expressRequest.method);
-    this.setCookies(expressRequest.cookies);
-    this.setClientIp(expressRequest.ip);
-    this.setUrl(expressRequest.url);
-    this.setParams(expressRequest.params);
-    this.setFiles(expressRequest.files);
-    this.setQuery(expressRequest.query);
-    this.setBody(expressRequest.body);
-    this.setHeaders(expressRequest.headers);
-    this.setXhr(expressRequest.xhr);
-    this.setUser(expressRequest.user);
+    this.expressRequest = expressRequest;
+
+    this.setExpressReq(this.expressRequest);
+    this.setMethod(this.expressRequest.method);
+    this.setCookies(this.expressRequest.cookies);
+    this.setClientIp(this.expressRequest.ip);
+    this.setUrl(this.expressRequest.url);
+    this.setParams(this.expressRequest.params);
+    this.setFiles(this.expressRequest.files);
+    this.setQuery(this.expressRequest.query);
+    this.setBody(this.expressRequest.body);
+    this.setHeaders(this.expressRequest.headers);
+    this.setXhr(this.expressRequest.xhr);
+    this.setUser(this.expressRequest.user);
 
     return this;
   }

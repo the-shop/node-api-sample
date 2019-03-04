@@ -26,6 +26,13 @@ class RenewJwt extends AbstractListener {
     if (httpRequest.user) {
       const jwtOptions = {};
       const token = await jwt.sign({ email: httpRequest.user.email }, config.jwt.secret, jwtOptions);
+      httpResponse.getExpressRes()
+        .cookie(
+          "Authorization",
+          `Bearer ${token}`,
+          { path: "/" }
+        );
+
       httpResponse.addHeader("Authorization", `Bearer ${token}`);
     }
   }

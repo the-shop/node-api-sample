@@ -9,6 +9,7 @@ import passport from "passport";
 import UsersCollection from "../Services/Users/Collections/Users";
 import AbstractListener from "../Framework/AbstractListener";
 import Application from "../Application";
+import InputMalformedError from "../Framework/Errors/InputMalformedError";
 
 /**
  * Used by framework to actually run the Application
@@ -43,14 +44,34 @@ class RegisterMiddleware extends AbstractListener {
 
       // Enable CORS
       expressApp.use((req, res, next) => {
-        res.header("Access-Control-Allow-Origin", "*");
-        res.header("Access-Control-Allow-Methods", "GET,PUT,POST,DELETE");
-        res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization, X-Total-Count");
-        res.header("Access-Control-Expose-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization, X-Total-Count");
+        const allowedOrigins = [
+          config.api.host,
+          config.frontend.host,
+        ];
 
-        // intercept OPTIONS method
-        if (req.method === "OPTIONS") {
-          res.sendStatus(200);
+        // If there are any other origins that have to be whitelisted add them in array
+        config.api.corsWhitelistOrigins.split(",").map(one => {
+          if (one.trim().length > 0) {
+            allowedOrigins.push(one.trim().toLowerCase());
+          }
+        });
+
+        const reqOrigin = req.get("origin");
+
+        // If allowed origin, set correct headers
+        if (allowedOrigins.indexOf(reqOrigin) !== -1) {
+          res.header("Access-Control-Allow-Origin", reqOrigin);
+          res.header("Access-Control-Allow-Methods", "OPTIONS,GET,PUT,POST,DELETE");
+          res.header("Access-Control-Allow-Credentials", true);
+          res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization, X-Total-Count");
+          res.header("Access-Control-Expose-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization, X-Total-Count");
+
+          // intercept OPTIONS method
+          if (req.method === "OPTIONS") {
+            res.sendStatus(200);
+          } else {
+            next();
+          }
         } else {
           next();
         }
@@ -67,11 +88,14 @@ class RegisterMiddleware extends AbstractListener {
       expressApp.use(cookieParser());
 
       // bodyParser should be above methodOverride
-      expressApp.use(bodyParser.json());
+      expressApp.use(bodyParser.json({
+        limit: "10mb"
+      }));
 
       // Accept urlencoded body
       expressApp.use(bodyParser.urlencoded({
-        extended: false
+        extended: false,
+        limit: "50mb"
       }));
 
       // Old browsers support
@@ -88,7 +112,9 @@ class RegisterMiddleware extends AbstractListener {
       expressApp.use(expressSession({
         secret: config.session.secret,
         resave: true,
-        saveUninitialized: true
+        maxAge: null,
+        saveUninitialized: true,
+        rolling: false
       }));
 
       /**
@@ -100,7 +126,20 @@ class RegisterMiddleware extends AbstractListener {
         done(null, user.email);
       });
       passport.deserializeUser(async (email, done) => {
-        const user = await UsersCollection.loadOne({email});
+        // Check if service JWT before DB query
+        if (email === config.application.serviceAccountEmail) {
+          return done(null, {
+            email: config.application.serviceAccountEmail,
+            _id: config.application.ownerId,
+          });
+        }
+
+        const user = await UsersCollection.loadOne({ email });
+
+        if (user === null || user === undefined) {
+          throw new InputMalformedError(`User with "${email}" no longer exists!`);
+        }
+
         done(null, user);
       });
     } catch (error) {

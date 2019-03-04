@@ -5,7 +5,7 @@ import {
 } from "admin-on-rest/lib/mui";
 
 const ListFilter = props => (
-  <Filter {...props} filterValues={{}}>
+  <Filter {...props}>
     <TextInput label="Search" source="search" alwaysOn />
   </Filter>
 );

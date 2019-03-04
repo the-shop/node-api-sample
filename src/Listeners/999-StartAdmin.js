@@ -14,28 +14,30 @@ class StartAdmin extends AbstractListener {
    * @type {Array}
    */
   static LISTEN_ON = [
-    Application.EVENT_APPLICATION_RUN_PRE
+    Application.EVENT_EXPRESS_API_ROUTES_REGISTERED_POST
   ];
 
   /**
    * Listener entry point
    */
   handle () {
+    const app = this.getApplication();
     try {
-      this.getApplication()
-        .log("Starting Admin");
+      app.log(`Starting Admin at "${config.admin.uri}" route`);
 
       const file = fs.readFileSync(path.join(__dirname, "../../admin/index.html"));
 
       // Serve index.html that will start up React application
-      this.getApplication()
-        .getExpress()
-        .get(`${config.admin.uri}`, function (req, res) {
-          res.writeHead(200, {"Content-Type": "text/html"});
-          res.end(file);
-        });
+      app.getExpress()
+        .get(
+          `${config.admin.uri}*`,
+          (req, res) => {
+            res.writeHead(200, {"Content-Type": "text/html"});
+            res.end(file);
+          }
+        );
     } catch (error) {
-      this.getApplication().logError(error.stack || error);
+      app.logError(error.stack || error);
     }
   }
 }

@@ -105,9 +105,12 @@ class UpdateAction extends AbstractAction {
     }
 
     // Field "email" has "unique" index applied to it so check if value already taken
-    if (await UsersCollection.loadOne({email: request.body.email}) !== null) {
-      throw new InputMalformedError("Email is taken.");
+    const existingModel = await UsersCollection.loadOne({email: request.body.email});
+    if (existingModel !== null && existingModel._id.toString() !== request.params.id.toString()) {
+throw new InputMalformedError("Email is taken.");
     }
+
+    await this.trigger("EVENT_ACTION_USER_UPDATE_MODEL_ACTION_INPUT_POST");
 
     return {
       id: request.params.id,

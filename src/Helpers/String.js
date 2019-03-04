@@ -8,6 +8,14 @@ String.prototype.trim = function () {
   return this.replace(/^\s+|\s+$/g, "");
 };
 
+String.prototype.trimAll = function () {
+  return this.replace(/\s+/g, "");
+};
+
+String.prototype.toTitle = function () {
+  return this.replace(/\w\S*/g, function(txt){return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();});
+};
+
 String.prototype.lowerFirstChar = function () {
   return this.charAt(0).toLowerCase() + this.slice(1);
 };

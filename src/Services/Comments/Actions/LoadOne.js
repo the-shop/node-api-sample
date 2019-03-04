@@ -1,6 +1,7 @@
 import CommentsCollection from "../Collections/Comments";
 import NotFoundError from "../../../Framework/Errors/NotFoundError";
 import AbstractAction from "../../../Framework/AbstractAction";
+import InputMalformedError from "../../../Framework/Errors/InputMalformedError";
 
 /**
  * @swagger
@@ -57,19 +58,31 @@ class LoadOneAction extends AbstractAction {
    * Formats input values from request to be passed onto handle() method
    */
   async getActionInput (request) {
-    this.getAcl().check("LOAD_ONE_COMMENT");
+    const { queryFilter, allowedFields } = this.getAcl().check("LOAD_ONE_COMMENT");
+
+    let validatedQuery = {};
+    try {
+      // Now validate query
+      validatedQuery = await CommentsCollection.validateQuery(queryFilter, {}, "Comment");
+    } catch (error) {
+      throw new InputMalformedError(error.message);
+    }
+
+    validatedQuery.id = request.params.id;
+
     return {
-      id: request.params.id
+      query: validatedQuery,
+      fields: allowedFields,
     };
   }
 
   /**
    * Actual handler for the API endpoint
    */
-  async handle ({id}) {
+  async handle ({ query, fields }) {
     await this.trigger("EVENT_ACTION_COMMENT_LOAD_MODEL_PRE");
 
-    const model = await CommentsCollection.loadOne({_id: id});
+    const model = await CommentsCollection.loadOne(query, fields);
 
     await this.trigger("EVENT_ACTION_COMMENT_LOAD_ONE_MODEL_LOADED", model);
 

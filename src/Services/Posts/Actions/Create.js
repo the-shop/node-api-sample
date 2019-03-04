@@ -71,6 +71,8 @@ class CreateAction extends AbstractAction {
       );
     }
 
+    await this.trigger("EVENT_ACTION_POST_CREATE_MODEL_ACTION_INPUT_POST");
+
     return {
       title: request.body.title,
       content: request.body.content,

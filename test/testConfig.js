@@ -70,6 +70,15 @@ const config = {
       url: process.env.AMAZON_S3_URL || "https://s3.amazonaws.com/",
     }
   },
+  vanillaForums: {
+    accessToken: process.env.VANILLA_FORUMS_ACCESS_TOKEN,
+    clientId: process.env.VANILLA_FORUMS_CLIENT_ID,
+    secret: process.env.VANILLA_FORUMS_SECRET,
+    url: process.env.VANILLA_FORUMS_URL,
+    loginUrl: process.env.VANILLA_FORUMS_LOGIN_URL || "/http://localhost:3000/login",
+    logoutUrl: process.env.VANILLA_FORUMS_LOGOUT_REDIRECT_URL, // Should be your FE application URL
+    ssoTimeout: process.env.VANILLA_FORUMS_SSO_TIMEOUT_SECONDS || 60,
+  },
   web: {
     uploadsDirectory: "uploads/"
   },

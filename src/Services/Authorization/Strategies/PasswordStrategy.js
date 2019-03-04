@@ -3,6 +3,7 @@ import passportJWT from "passport-jwt";
 import mongoose from "mongoose";
 import UnauthorizedError from "../../../Framework/Errors/UnauthorizedError";
 import Authorization from "../index";
+import config from "../../../config";
 
 const User = mongoose.model("User");
 
@@ -19,6 +20,14 @@ class PasswordStrategy {
       async (payload, done) => {
         if (payload.expires < Date.now()) {
           return done(null, false, new UnauthorizedError("Token expired"));
+        }
+
+        // Check if service JWT before DB query
+        if (payload.email === config.application.serviceAccountEmail) {
+          return done(null, {
+            email: config.application.serviceAccountEmail,
+            _id: config.application.ownerId,
+          });
         }
 
         const user = await User.findOne({ email: payload.email });

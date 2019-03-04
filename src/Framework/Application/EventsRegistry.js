@@ -1,4 +1,5 @@
 import fs from "fs";
+import moment from "moment";
 import { join } from "path";
 import AbstractListener from "../AbstractListener";
 
@@ -42,7 +43,7 @@ class EventsRegistry {
    * @param eventHandler
    * @returns {EventsRegistry}
    */
-  listen (eventName, eventHandler) {
+  listen(eventName, eventHandler) {
     this.getApplication()
       .log(
         "Listening for event %s (handler: %s)",
@@ -68,7 +69,7 @@ class EventsRegistry {
    * @param response
    * @returns {Promise<Array>}
    */
-  async trigger (eventName, payload = {}, request, response) {
+  async trigger(eventName, payload = {}, request, response) {
     this.getApplication().log("Triggering event %s", eventName);
 
     let responses = [];
@@ -88,7 +89,7 @@ class EventsRegistry {
           this.triggeredEvents.push({
             eventName,
             listener: listener.constructor.name,
-            timestampMs: (new Date()).getTime()
+            timestampMs: moment().unix(),
           });
 
           if (listener.isAsync() === true) {
@@ -138,7 +139,7 @@ class EventsRegistry {
     await this.generateDocumentation();
   }
 
-  registerListenersFromDirectory (directoryPath) {
+  registerListenersFromDirectory(directoryPath) {
     fs.readdirSync(directoryPath)
     // Filter out non-js files from the directory (git related, documentation,...)
       .filter(one => !one.match(/^(.(?!\.js$))+$/))
@@ -154,7 +155,7 @@ class EventsRegistry {
   /**
    * Listener entry point
    */
-  async generateDocumentation () {
+  async generateDocumentation() {
     const configuration = this.getApplication().getConfiguration();
     this.getApplication().log(" - documentation for the listeners is generating...");
     if (configuration.env === "production") {
@@ -211,7 +212,7 @@ class EventsRegistry {
    * Writes single line into stream
    * @param line
    */
-  writeDocumentationLine (line) {
+  writeDocumentationLine(line) {
     this.documentationWriteStream.write(`${line}\n`);
   }
 
@@ -260,7 +261,7 @@ class EventsRegistry {
    * Returns list of triggered events in time of method call
    * @returns {Array}
    */
-  getAllTriggered () {
+  getAllTriggered() {
     return this.triggeredEvents;
   }
 
@@ -268,7 +269,7 @@ class EventsRegistry {
    * Returns list of registered listeners in time of method call
    * @returns {Array}
    */
-  getAllRegistered () {
+  getAllRegistered() {
     return this.registeredListeners;
   }
 
@@ -278,7 +279,7 @@ class EventsRegistry {
    * @param applicationInstance
    * @returns {this}
    */
-  setApplication (applicationInstance) {
+  setApplication(applicationInstance) {
     this.applicationInstance = applicationInstance;
   }
 
@@ -286,7 +287,7 @@ class EventsRegistry {
    * Getter for application instance
    * @returns {null|Application}
    */
-  getApplication () {
+  getApplication() {
     return this.applicationInstance;
   }
 }

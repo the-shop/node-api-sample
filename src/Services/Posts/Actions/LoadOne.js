@@ -1,6 +1,7 @@
 import PostsCollection from "../Collections/Posts";
 import NotFoundError from "../../../Framework/Errors/NotFoundError";
 import AbstractAction from "../../../Framework/AbstractAction";
+import InputMalformedError from "../../../Framework/Errors/InputMalformedError";
 
 /**
  * @swagger
@@ -57,19 +58,31 @@ class LoadOneAction extends AbstractAction {
    * Formats input values from request to be passed onto handle() method
    */
   async getActionInput (request) {
-    this.getAcl().check("LOAD_ONE_POST");
+    const { queryFilter, allowedFields } = this.getAcl().check("LOAD_ONE_POST");
+
+    let validatedQuery = {};
+    try {
+      // Now validate query
+      validatedQuery = await PostsCollection.validateQuery(queryFilter, {}, "Post");
+    } catch (error) {
+      throw new InputMalformedError(error.message);
+    }
+
+    validatedQuery.id = request.params.id;
+
     return {
-      id: request.params.id
+      query: validatedQuery,
+      fields: allowedFields,
     };
   }
 
   /**
    * Actual handler for the API endpoint
    */
-  async handle ({id}) {
+  async handle ({ query, fields }) {
     await this.trigger("EVENT_ACTION_POST_LOAD_MODEL_PRE");
 
-    const model = await PostsCollection.loadOne({_id: id});
+    const model = await PostsCollection.loadOne(query, fields);
 
     await this.trigger("EVENT_ACTION_POST_LOAD_ONE_MODEL_LOADED", model);
 

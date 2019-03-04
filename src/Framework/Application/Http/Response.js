@@ -3,11 +3,13 @@
  */
 class Response {
   async buildResponse(expressResponse) {
+    this.expressResponse = expressResponse;
+
     this.code = 200;
     this.body = {};
     this.headers = {};
     this.type = null;
-    this.setExpressRes(expressResponse);
+    this.setExpressRes(this.expressResponse);
 
     return this;
   }
@@ -135,12 +137,14 @@ class Response {
    * The parameter can be any JSON type, including object, array, string, Boolean, or number,
    * and you can also use it to convert other values to JSON, such as null, and undefined
    * (although these are technically not valid JSON).
+   *
+   * @param body
    */
-  json() {
+  json(body = null) {
     const expressRes = this.getExpressRes();
-    const type = this.getType();
-    if (type !== null) {
-      expressRes.type(type);
+
+    if (body !== null) {
+      this.setBody(body);
     }
 
     expressRes.set(this.getHeaders())
@@ -151,12 +155,18 @@ class Response {
   /**
    * Sends the HTTP response.
    * The body parameter can be a Buffer object, a String, an object, or an Array.
+   *
+   * @param body
    */
-  send() {
+  send(body = null) {
     const expressRes = this.getExpressRes();
     const type = this.getType();
     if (type !== null) {
       expressRes.type(type);
+    }
+
+    if (body !== null) {
+      this.setBody(body);
     }
 
     expressRes.set(this.getHeaders())

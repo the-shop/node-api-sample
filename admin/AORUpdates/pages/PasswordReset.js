@@ -13,9 +13,9 @@ import RaisedButton from "material-ui/RaisedButton";
 import TextField from "material-ui/TextField";
 import LockIcon from "material-ui/svg-icons/action/lock-outline";
 import { cyan500, pinkA200 } from "material-ui/styles/colors";
+import { translate, showNotification } from "admin-on-rest";
 
-import { Notification, translate, showNotification } from "admin-on-rest";
-
+import Notification from "../components/Notification";
 import customTheme from "../customTheme";
 
 const styles = {
@@ -67,7 +67,6 @@ const renderInput = ({ meta: { touched, error } = {}, input: { ...inputProps }, 
   />;
 
 class PasswordReset extends Component {
-
   passwordReset = ({ password, passwordConfirm  }) => {
     const { showNotification } = this.props;
     const queryParams = queryString.parse(this.props.location.search);

@@ -52,9 +52,9 @@ PostSchema.static({});
 /**
  * Indexes
  */
-PostSchema.index({});
+//PostSchema.index({});
 
 /**
  * Register
  */
-mongoose.model("Post", PostSchema);
+export default mongoose.model("Post", PostSchema);

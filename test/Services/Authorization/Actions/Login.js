@@ -1,6 +1,7 @@
 import request from "supertest";
 import test from 'tape-promise/tape'
 import BaseTest from "../../../BaseTest";
+import LoginAction from "../../../../src/Services/Authorization/Actions/Login";
 
 class Login extends BaseTest {
   async run() {
@@ -38,6 +39,22 @@ class Login extends BaseTest {
       test.equal(response.headers.authorization, undefined, 'Authorization header not defined');
       test.equal(response.body.error, true, "Error occurred");
       test.equal(response.body.errors[0], "User not found", "Field 'errors' matches");
+
+      test.end();
+    });
+
+    test("POST /login - sanitize email input", async test => {
+      const email = " TEsTING@tEstING.COM ";
+      const loginAction = new LoginAction();
+
+      const response = await loginAction.getActionInput({
+        body: {
+          email,
+          password: "testPassword"
+        }
+      });
+
+      test.equal(response.email, "testing@testing.com");
 
       test.end();
     });

@@ -71,6 +71,8 @@ class CreateAction extends AbstractAction {
       );
     }
 
+    await this.trigger("EVENT_ACTION_COMMENT_CREATE_MODEL_ACTION_INPUT_POST");
+
     return {
       ownerId: request.body.ownerId,
       content: request.body.content,

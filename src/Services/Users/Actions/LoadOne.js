@@ -1,6 +1,7 @@
 import UsersCollection from "../Collections/Users";
 import NotFoundError from "../../../Framework/Errors/NotFoundError";
 import AbstractAction from "../../../Framework/AbstractAction";
+import InputMalformedError from "../../../Framework/Errors/InputMalformedError";
 
 /**
  * @swagger
@@ -57,19 +58,31 @@ class LoadOneAction extends AbstractAction {
    * Formats input values from request to be passed onto handle() method
    */
   async getActionInput (request) {
-    this.getAcl().check("LOAD_ONE_USER");
+    const { queryFilter, allowedFields } = this.getAcl().check("LOAD_ONE_USER");
+
+    let validatedQuery = {};
+    try {
+      // Now validate query
+      validatedQuery = await UsersCollection.validateQuery(queryFilter, {}, "User");
+    } catch (error) {
+      throw new InputMalformedError(error.message);
+    }
+
+    validatedQuery.id = request.params.id;
+
     return {
-      id: request.params.id
+      query: validatedQuery,
+      fields: allowedFields,
     };
   }
 
   /**
    * Actual handler for the API endpoint
    */
-  async handle ({id}) {
+  async handle ({ query, fields }) {
     await this.trigger("EVENT_ACTION_USER_LOAD_MODEL_PRE");
 
-    const model = await UsersCollection.loadOne({_id: id});
+    const model = await UsersCollection.loadOne(query, fields);
 
     await this.trigger("EVENT_ACTION_USER_LOAD_ONE_MODEL_LOADED", model);
 

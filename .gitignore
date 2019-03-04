@@ -16,4 +16,13 @@ yarn-error.log
 yarn.lock
 package.lock
 package-lock.json
+application.log
+application.error.log
+.nyc_output/
+coverage/
 newrelic_agent.log
+
+# OS specifics
+
+.DS_Store
+

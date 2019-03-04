@@ -6,7 +6,6 @@ import express from "express";
 import config from "../../testConfig";
 import Router from "../../../src/Framework/Application/Router";
 
-
 class RouterTest extends BaseTest {
   constructor(application) {
     super(application);

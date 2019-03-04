@@ -36,41 +36,41 @@ class StartSwagger extends AbstractListener {
    * @type {Array}
    */
   static LISTEN_ON = [
-    Application.EVENT_APPLICATION_RUN_PRE
+    Application.EVENT_EXPRESS_API_ROUTES_REGISTERED_POST
   ];
 
   /**
    * Listener entry point
    */
-  handle () {
+  handle() {
+    const app = this.getApplication();
     try {
-      this.getApplication()
-        .log("Starting Swagger");
+      app.log(`Starting Swagger at "${config.swagger.docsUri}" route`);
+      const express = app.getExpress();
 
       // Initialize swagger-jsdoc -> returns validated swagger spec in json format
       const swaggerSpec = swaggerJSDoc(swaggerJSDocOptions);
 
       // Serve swagger docs the way you like (Recommendation: swagger-tools)
-      this.getApplication()
-        .getExpress()
-        .get("/api-docs.json", function (req, res) {
-          res.setHeader("Content-Type", "application/json");
-          res.send(swaggerSpec);
-        });
+      express.get("/api-docs.json", function (req, res) {
+        res.setHeader("Content-Type", "application/json");
+        res.send(swaggerSpec);
+      });
 
-      this.getApplication()
-        .getExpress()
-        .use("/api-docs/", swaggerUi.serve, swaggerUi.setup(
+      express.use(
+        `${config.swagger.docsUri}`,
+        swaggerUi.serve,
+        swaggerUi.setup(
           null, // Swagger document, skip and use route to fetch it
           false, // Show explorer
           null, // Options
           null, // Custom CSS
           null, // Custom favicon
           `${swaggerHost}/api-docs.json`,
-          "Node API Sample documentation" // Custom title
+          "Node API Sample" // Custom title
         ));
     } catch (error) {
-      this.getApplication().logError(error.stack || error);
+      app.logError(error.stack || error);
     }
   }
 }

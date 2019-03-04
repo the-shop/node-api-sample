@@ -1,13 +1,10 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
-import { withRouter } from "react-router-dom";
+import { withRouter, Link } from "react-router-dom";
 import withWidth from "material-ui/utils/withWidth";
 import { AppBarMobile, Restricted } from "admin-on-rest";
 import { Card, CardTitle, CardActions } from "material-ui/Card";
 import FlatButton from "material-ui/FlatButton";
-import adminRouteUri from "adminRouteUri";
-import { fetchJson } from "../jsonServer";
-import cookies from "../Cookies";
 
 import {
   deepOrange700,
@@ -27,16 +24,14 @@ class Dashboard extends Component {
   constructor(props, context) {
     super(props, context);
     this.state = {
-      totals: {}
+      totals: {
+        Users: {},
+        Posts: {},
+        Comments: {},
+      }
     };
   }
 
-  componentDidMount() {
-    const token = cookies.get("Authorization", { path: "/" });
-    fetchJson("api/v1/statistics/counts", { user : { token, authenticated: true } })
-      .then(response => response.json)
-      .then(response => this.setState({ totals: response.model.totals }));
-  }
 
   render() {
     const { totals } = this.state;
@@ -47,19 +42,18 @@ class Dashboard extends Component {
 
         <div style={width === 1 ? styles.fullWidthFlex : styles.flex}>
 
-          {width === 1 && <AppBarMobile title="Admin Dashboard" />}
+          {width === 1 && <AppBarMobile title="Node API Sample" />}
 
           {Object.keys(totals).map((key, index) => {
             const card = (
               <Card style={styles.card}>
                 <CardTitle
-                  title={totals[key]}
                   subtitle={key.toDash().replace("-", " ").toUpperCase()}
                 />
                 <CardActions style={styles.cardActions}>
                   <FlatButton
                     label="View"
-                    href={`${adminRouteUri}#/${key.toDash()}`}
+                    containerElement={<Link to={`/${key.lowerFirstChar().toDash().toLowerCase()}`} />}
                   />
                 </CardActions>
 

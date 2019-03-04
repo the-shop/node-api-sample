@@ -12,10 +12,10 @@ class BaseTest {
   }
 
   async registerTestUser(
-    firstName= this.getRandomizer().randomString(1),
-    lastName= this.getRandomizer().randomString(1),
-    email= this.getRandomEmail(),
-    role= "admin",
+    firstName = this.getRandomizer().randomString(1),
+    lastName = this.getRandomizer().randomString(1),
+    email = this.getRandomEmail(),
+    role = "admin",
     password = "aaaaaa0!"
   ) {
     const response = await request(this.express)

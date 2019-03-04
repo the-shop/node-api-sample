@@ -47,9 +47,9 @@ CommentSchema.static({});
 /**
  * Indexes
  */
-CommentSchema.index({});
+//CommentSchema.index({});
 
 /**
  * Register
  */
-mongoose.model("Comment", CommentSchema);
+export default mongoose.model("Comment", CommentSchema);

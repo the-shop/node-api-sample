@@ -65,9 +65,14 @@ class RegisterAction extends AbstractAction {
    * @returns {Promise<{email, firstName, lastName, password}>}
    */
   async getActionInput (request) {
-    if (!request.body.email) {
+    if (typeof request.body.email !== "string") {
       throw new InputMalformedError("Field \"email\" is required");
     }
+
+    const email = request.body
+      .email
+      .toLowerCase()
+      .trim();
 
     if (!request.body.firstName) {
       throw new InputMalformedError("Field \"firstName\" is required");
@@ -81,13 +86,15 @@ class RegisterAction extends AbstractAction {
       throw new InputMalformedError("Field \"password\" is required");
     }
 
-    request.body.email = request.body.email.toLowerCase().trim();
-
     const EmailValidator = new Email();
 
-    if (!EmailValidator.validateEmail(request.body.email)) {
+    if (!EmailValidator.validateEmail(email)) {
       throw new InputMalformedError("Invalid email format.");
     }
+
+    request.body.email = email;
+
+    await this.trigger("EVENT_ACTION_REGISTER_USER_INPUT_POST");
 
     return request.body;
   }
@@ -95,7 +102,13 @@ class RegisterAction extends AbstractAction {
   /**
    * Actual handler for the API endpoint
    */
-  async handle (params, req, res) {
+  async handle(
+    params,
+    req,
+    res
+  ) {
+    await this.trigger("EVENT_ACTION_REGISTER_USER_PRE", params);
+
     const config = this.getApplication().getConfiguration();
     const existingUser = await UsersCollection.loadOne({ email: params.email });
 
@@ -107,7 +120,9 @@ class RegisterAction extends AbstractAction {
     tmpUser.password = params.password;
 
     const createAction = new CreateUserAction();
-    createAction.setApplication(this.getApplication());
+    createAction.setApplication(this.getApplication())
+      .setRequest(this.getRequest())
+      .setResponse(this.getResponse());
     const user = await createAction.handle(params);
 
     user.password = params.password;

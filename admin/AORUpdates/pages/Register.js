@@ -13,9 +13,9 @@ import RaisedButton from "material-ui/RaisedButton";
 import TextField from "material-ui/TextField";
 import LockIcon from "material-ui/svg-icons/action/lock-outline";
 import { cyan500, pinkA200 } from "material-ui/styles/colors";
+import { translate, userLogin as userLoginAction, showNotification } from "admin-on-rest";
 
-import { Notification, translate, userLogin as userLoginAction, showNotification } from "admin-on-rest";
-
+import Notification from "../components/Notification";
 import customTheme from "../customTheme";
 
 const styles = {
@@ -67,28 +67,28 @@ const renderInput = ({ meta: { touched, error } = {}, input: { ...inputProps }, 
   />;
 
 class Register extends Component {
+  constructor(props, context) {
+    super(props, context);
+    this.register = this.register.bind(this);
+  }
 
-  register = ({ email, firstName, lastName, password }) => {
+  register(data) {
     const { userLogin, showNotification, location } = this.props;
 
     const headers = new Headers();
     headers.set("Content-Type", "application/json");
 
-    fetch("/api/v1/register",
+    fetch(
+      "/api/v1/register",
       {
         method: "POST",
         headers,
-        body: JSON.stringify({
-          firstName,
-          lastName,
-          email,
-          password,
-        })
+        body: JSON.stringify(data)
       }
     ).then((response) => response.json())
       .then((response) => {
         if (!response.error) {
-          userLogin({ username: email, password }, location.state ? location.state.nextPathname : "/");
+          userLogin({ username: data.email, password: data.password }, location.state ? location.state.nextPathname : "/");
         } else {
           showNotification(response.errors.join(","), "warning");
         }
@@ -96,12 +96,13 @@ class Register extends Component {
       .catch((e) => {
         console.error(e); // eslint-disable-line
       });
-  };
+  }
 
   render() {
     const { handleSubmit, submitting, translate } = this.props;
     const muiTheme = getMuiTheme(customTheme);
     const { primary2Color, accent1Color } = getColorsFromTheme(muiTheme);
+
     return (
       <MuiThemeProvider muiTheme={muiTheme}>
         <div style={{ ...styles.main, backgroundColor: primary2Color }}>
@@ -138,6 +139,14 @@ class Register extends Component {
                     component={renderInput}
                     floatingLabelText={translate("aor.auth.password")}
                     type="password"
+                  />
+                </div>
+                <div style={styles.input}>
+                  <Field
+                    name="role"
+                    component={renderInput}
+                    floatingLabelText="User&#39;s role"
+                    type="text"
                   />
                 </div>
               </div>

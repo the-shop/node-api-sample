@@ -1,6 +1,5 @@
 import AbstractAdapter from "../../../Framework/AbstractAdapter";
 import UsersCollection from "../../Users/Collections/Users";
-import UserAdapter from "../../Users/Adapters/User";
 
 /**
  * User response schema
@@ -44,6 +43,7 @@ import UserAdapter from "../../Users/Adapters/User";
  *     properties:
  *       error:
  *         type: boolean
+ *         example: false
  *       model:
  *         type: object
  *         $ref: '#/definitions/UserModel'
@@ -56,6 +56,7 @@ import UserAdapter from "../../Users/Adapters/User";
  *     properties:
  *       error:
  *         type: boolean
+ *         example: false
  *       models:
  *         type: array
  *         items:
@@ -90,12 +91,19 @@ class User extends AbstractAdapter {
     const out = {};
     const modelData = model.toJSON();
 
-    const userAdapter = new UserAdapter();
+    const adapterRegistry = this.getApplication()
+      .getAdaptersRegistry();
+
+    const userAdapter = adapterRegistry.get("User", null);
 
     let owner = null;
     if (modelData.owner !== undefined) {
       owner = null;
-      const ownerModel = await UsersCollection.loadOne({id: modelData.owner});
+      const { queryFilter, allowedFields } = this.getApplication()
+        .getAcl()
+        .check("ADAPT_USER_MODEL");
+      const query = Object.assign({ id: modelData.owner }, queryFilter);
+      const ownerModel = await UsersCollection.loadOne(query, allowedFields);
       if (ownerModel && ownerModel.id !== model.id) {
         owner = await userAdapter.adapt(ownerModel);
       } else if (ownerModel && ownerModel.id === model.id) {

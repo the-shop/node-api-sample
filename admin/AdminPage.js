@@ -1,5 +1,7 @@
 import React, { Component } from "react";
 
+import createHistory from "history/createBrowserHistory";
+
 import { Admin, Resource } from "admin-on-rest";
 import { Delete } from "admin-on-rest/lib/mui";
 
@@ -28,11 +30,15 @@ import CommentsList from "./Comments/List";
 import CommentsEdit from "./Comments/Edit";
 import CommentsCreate from "./Comments/Create";
 
+
+import config from "../src/config";
+const history = createHistory({ basename: config.admin.uri });
+
 class AdminPage extends Component {
   render() {
     return (
       <Admin
-        title="Admin Dashboard"
+        title="Node API Sample"
         dashboard={Dashboard}
         authClient={Utility.authClient}
         locale="en"
@@ -42,6 +48,7 @@ class AdminPage extends Component {
         restClient={Utility.jsonServer("/api/v1", Utility.httpClient)}
         appLayout={AdminLayout}
         menu={Menu}
+        history={history}
       >
 
         <Resource

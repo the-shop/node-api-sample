@@ -19,63 +19,63 @@ class ApplicationRun extends AbstractListener {
   /**
    * Listener entry point
    */
-  handle () {
-    this.getApplication()
-      .getEventsRegistry()
-      .trigger(Application.EVENT_APPLICATION_RUN_PRE, this.getApplication());
+  async handle () {
+    const app = this.getApplication();
+
+    app.getEventsRegistry()
+      .trigger(Application.EVENT_APPLICATION_RUN_PRE, app);
 
     try {
       this.getApplication().log("Connecting to Mongo");
       const database = new Database({ keepAlive: true });
-      database.setApplication(this.getApplication());
-      database.connect();
+      database.setApplication(app)
+        .connect();
 
-      this.getApplication().setDatabase(database);
+      app.setDatabase(database)
+        .log("REGISTER: Routes");
 
-      this.getApplication().log("REGISTER: Routes");
-      this.getApplication().getRouter().registerRoutes();
+      app.getRouter()
+        .registerRoutes();
 
-      this.getApplication().log("REGISTER: Error handler");
+      await app.getEventsRegistry()
+        .trigger(Application.EVENT_EXPRESS_API_ROUTES_REGISTERED_POST, app);
+
+      app.log("REGISTER: Error handler");
+
       this.registerErrorHandler();
 
-      this.startExpress();
+      await this.startExpress();
 
     } catch (error) {
-      this.getApplication()
-        .logError(error.stack || error);
+      app.logError(error.stack || error);
     }
 
-    this.getApplication()
-      .getEventsRegistry()
-      .trigger(Application.EVENT_APPLICATION_RUN_POST, this.getApplication());
+    app.getEventsRegistry()
+      .trigger(Application.EVENT_APPLICATION_RUN_POST, app);
   }
 
   /**
    * Actually starts the express Application
    */
-  startExpress () {
-    this.getApplication()
-      .getEventsRegistry()
-      .trigger(Application.EVENT_EXPRESS_START_PRE, this.getApplication());
+  async startExpress () {
+    const app = this.getApplication();
+    await app.getEventsRegistry()
+      .trigger(Application.EVENT_EXPRESS_START_PRE, app);
 
     if (this.getApplication().getExpress().get("env") === "test") {
       this.getApplication().log("Test environment detected. Exiting.");
       return;
     }
 
-    const port = this.getApplication()
-      .getExpressPort();
+    const port = app.getExpressPort();
 
-    this.getApplication()
-      .getExpress()
-      .listen(port, () => {
-        this.getApplication().log(`API started on port ${port}`);
-        return this.getApplication()
-          .getEventsRegistry()
+    app.getExpress()
+      .listen(port, async () => {
+        app.log(`API started on port ${port}`);
+        return await app.getEventsRegistry()
           .trigger(
             Application.EVENT_EXPRESS_START_POST,
-            this.getApplication()
-              .getExpress()
+            app.getExpress()
           );
       });
   }

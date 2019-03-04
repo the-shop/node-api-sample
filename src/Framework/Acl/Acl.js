@@ -47,6 +47,14 @@ class Acl {
       return rule.permission !== "allow";
     });
 
+    // Check if queryFilter contains special cases
+    Object.keys(queryFilter).map(key => {
+      if (queryFilter[key] === "$authUserId") {
+        queryFilter[key] = this.getAuthorization()
+          .getUserId();
+      }
+    });
+
     if (failedRule && type === "role") {
       return this.check(action, "user", "authenticated");
     } else if (failedRule) {
