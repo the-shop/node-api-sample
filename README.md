@@ -118,12 +118,6 @@ To run all:
 
     $ yarn test # or `npm run test`
 
-To run code coverage report run:
-
-    $ yarn coverage:html # or `npm run coverage:html`
-
-And it will generate output html in `coverage/` directory.
-
 ## Seeding data
 
 Seeders are found in `src/Database/seed/` directory.
